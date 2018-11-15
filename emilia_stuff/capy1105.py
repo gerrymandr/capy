@@ -163,7 +163,7 @@ def gini(dem, tot_pop_vec):
     denum = 2*(totpop-minpop)*minpop
     for i in range(dem.size):
         for j in range(dem.size):
-            numerator += np.absolute((tot_pop_vec[j]*dem[i])-(tot_pop_vec[i]*dem[j]))
+            numerator += np.absolute(((tot_pop_vec[j]*dem[i])-(tot_pop_vec[i]*dem[j]))[0])
         
     return numerator / denum   
 
@@ -186,11 +186,11 @@ h_scores = [[]]
 a_scores = [[]]
 
 
-b_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Frey", "Assortativity", "Moran's I" ])
+b_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Frey", "Gini", "Assortativity", "Moran's I" ])
 
-h_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Frey", "Assortativity", "Moran's I" ])
+h_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Frey", "Gini", "Assortativity", "Moran's I" ])
 
-a_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Frey", "Assortativity", "Moran's I" ])
+a_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Frey", "Gini", "Assortativity", "Moran's I" ])
 
 bEdge = []
 bHEdge = []
