@@ -11,6 +11,7 @@ import networkx as nx
 import json
 import csv
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 #this function counts the number of edges between a vertex of demographic x and a vertex of demographic y.
@@ -156,15 +157,15 @@ def asq(dem_list, A):
 
 #the gini index in our notation. 
 def gini(dem, tot_pop_vec):
-    numerators = np.zeros(dem.size)
+    numerator = 0
     totpop = np.sum(tot_pop_vec)
     minpop = np.sum(dem)
     denum = 2*(totpop-minpop)*minpop
     for i in range(dem.size):
         for j in range(dem.size):
-            numerators[i] += np.absolute((tot_pop_vec[j]*dem[i])-(tot_pop_vec[i]*dem[j]))
+            numerator += np.absolute((tot_pop_vec[j]*dem[i])-(tot_pop_vec[i]*dem[j]))
         
-    return np.sum(numerators) / denum   
+    return numerator / denum   
 
 #Moran's I in our notation
 def moran(dem, A):
@@ -213,7 +214,7 @@ hAssort = []
 hMoran = []
 
 #we compute scores 
-for city in cities:
+for city in tqdm(cities):
     with open('json10/'+city+'_data.json') as f:
         data = json.load(f)
     #g = nx.adjacency_graph(data)
@@ -256,7 +257,6 @@ for city in cities:
     # make adjacency matrix 
     A = nx.to_numpy_matrix(g)
 
-  
     #compute and store the energy scores in a csv
     btemplist = []
     btemplist.append(city)
@@ -264,7 +264,7 @@ for city in cities:
     btemplist.append(hedge([black, white], A))
     btemplist.append(diss(black, tot))
     btemplist.append(frey(black, white))
-    #btemplist.append(gini(black, tot))
+    btemplist.append(gini(black, tot))
     btemplist.append(asq([black, white], A))
     btemplist.append(moran(black,A))
     
@@ -283,7 +283,7 @@ for city in cities:
     htemplist.append(hedge([hisp, white], A))
     htemplist.append(diss(hisp, tot))
     htemplist.append(frey(hisp, white))
-    #htemplist.append(gini(hisp, tot))
+    htemplist.append(gini(hisp, tot))
     htemplist.append(asq([hisp, white], A))
     htemplist.append(moran(hisp,A))
     
@@ -295,14 +295,14 @@ for city in cities:
     hMoran.append(moran(hisp,A))
 
     h_scores.append(htemplist)  
-
-    atemplist = []
+    
+    atemplist = []    
     atemplist.append(city)
     atemplist.append(edge([asian, white], A))
     atemplist.append(hedge([asian, white], A))
     atemplist.append(diss(asian, tot))
     atemplist.append(frey(asian, white))
-    #atemplist.append(gini(asian, tot))
+    atemplist.append(gini(asian, tot))
     atemplist.append(asq([asian, white], A))
     atemplist.append(moran(asian,A))
     
