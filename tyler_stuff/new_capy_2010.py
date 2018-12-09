@@ -17,12 +17,12 @@ h_scores = [[]]
 a_scores = [[]]
 
 
-b_scores.append(["City", "Edge" , "HEdge", "HEdgeInfinity", "Dissimilarity", "Gini", "Moran's I"])
+b_scores.append(["City", "Total polulation", "Percent Black", "Percent White", "Edge" , "HEdge", "HEdgeInfinity", "Dissimilarity", "Gini", "Moran's I"])
 
 
-h_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Assortativity", "Moran's I" ])
+#h_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Assortativity", "Moran's I" ])
 
-a_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Assortativity", "Moran's I" ])
+#a_scores.append(["City", "Edge" , "HEdge", "Dissimilarity", "Assortativity", "Moran's I" ])
 
 bEdge = []
 bHEdge = []
@@ -31,6 +31,7 @@ bFrey = []
 bAssort = []
 bMoran = []
 
+"""
 aEdge = []
 aHEdge = []
 aDiss = []
@@ -44,6 +45,7 @@ hDiss = []
 hFrey = []
 hAssort = []
 hMoran = []
+"""
 
 #we compute scores
 for city in cities:
@@ -87,13 +89,30 @@ for city in cities:
         nh[i] = tot[i] - hisp[i]
         na[i] = tot[i] - asian[i]
 
+
+    # maybe I can use these vectors, sum them up, etc.
+    total_white = white.sum()
+    total_black = black.sum()
+    total_pop = tot.sum()
+
+    white_rho = float(total_white) / float(total_pop) * 100.
+    black_rho = float(total_black) / float(total_pop) * 100.
+
+    print "white_rho is " + str(white_rho) + " and black rho is " + str(black_rho)
+
     # make adjacency matrix
     A = nx.to_numpy_matrix(g)
 
 
     #compute and store the energy scores in a csv
     btemplist = []
+    # info, like name, population, black rho, and white rho (percentage of that pop in the city)
     btemplist.append(city)
+    btemplist.append(total_pop)
+    btemplist.append(black_rho)
+    btemplist.append(white_rho)
+
+    # now compute interesting scoprs
     btemplist.append(edge(black, white, A))
     btemplist.append(half_edge(black, white, A))
     btemplist.append(half_edge_infinity(black, white, A))
@@ -168,7 +187,7 @@ with open('city scores AW_1105.csv', 'w', newline='') as csvfile:
     writer.writerows(a_scores)
 """
 
-with open('city scores BW_1105.csv', 'w') as csvfile:
+with open('city scores BW_1105 with pop and rho.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)
 
