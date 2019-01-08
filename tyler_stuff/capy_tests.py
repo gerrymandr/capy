@@ -5,8 +5,9 @@ import networkx as nx
 import json
 import csv
 import matplotlib.pyplot as plt
+import random
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge
 
 # this is what we range the scalar values of x and y (if you increase the range, the time for the tests to run goes up)
 test_range = range(1,3)
@@ -116,6 +117,11 @@ for x0 in test_range:
 
                   x = np.array([x0, x1, x2])
                   y = np.array([y0, y1, y2])
+                  z0 = random.randint(1,3)
+                  z1 = random.randint(1,3)
+                  z2 = random.randint(1,3)
+                  z = np.array([z0, z1, z2])
+
                   A = np.array([[0, adj_01, adj_02], [adj_01, 0, adj_12], [adj_02, adj_12, 0]])
 
                   p0 = x0 + y0
@@ -127,15 +133,28 @@ for x0 in test_range:
                   total_pop = p0 + p1 + p2
                   total_x = x0 + x1 + x2
 
-                  e = x0 * y0 + x1 * y1 + x2 * y2 + adj_01 * (x0 * y1 + x1 * y0) + adj_02 * (x0 * y2 + x2 * y0) + adj_12 * (x1 * y2 + x2 * y1)
-                  e_x = x0 * x0 + x1 * x1 + x2 * x2 + adj_01 * (x0 * x1 + x1 * x0) + adj_02 * (x0 * x2 + x2 * x0) + adj_12 * (x1 * x2 + x2 * x1)
-                  e_y = y0 * y0 + y1 * y1 + y2 * y2 + adj_01 * (y0 * y1 + y1 * y0) + adj_02 * (y0 * y2 + y2 * y0) + adj_12 * (y1 * y2 + y2 * y1)
+                  # this set of for-loops also goes through more_edge and more_half_edge, so we need these extra values
+                  e_xy = float(x0 * y0 + x1 * y1 + x2 * y2 + adj_01 * (x0 * y1 + x1 * y0) + adj_02 * (x0 * y2 + x2 * y0) + adj_12 * (x1 * y2 + x2 * y1))
+                  e_xz = float(x0 * z0 + x1 * z1 + x2 * z2 + adj_01 * (x0 * z1 + x1 * z0) + adj_02 * (x0 * z2 + x2 * z0) + adj_12 * (x1 * z2 + x2 * z1))
+                  e_zy = float(z0 * y0 + z1 * y1 + z2 * y2 + adj_01 * (z0 * y1 + z1 * y0) + adj_02 * (z0 * y2 + z2 * y0) + adj_12 * (z1 * y2 + z2 * y1))
 
-                  skew_x = (float(e_x) / (e_x + 2 * e))
-                  skew_y = (float(e_y) / (e_y + 2 * e))
+                  e_x = float(x0 * x0 + x1 * x1 + x2 * x2 + adj_01 * (x0 * x1 + x1 * x0) + adj_02 * (x0 * x2 + x2 * x0) + adj_12 * (x1 * x2 + x2 * x1))
+                  e_y = float(y0 * y0 + y1 * y1 + y2 * y2 + adj_01 * (y0 * y1 + y1 * y0) + adj_02 * (y0 * y2 + y2 * y0) + adj_12 * (y1 * y2 + y2 * y1))
+                  e_z = float(z0 * z0 + z1 * z1 + z2 * z2 + adj_01 * (z0 * z1 + z1 * z0) + adj_02 * (z0 * z2 + z2 * z0) + adj_12 * (z1 * z2 + z2 * z1))
 
-                  skew_prime_x = (float(e_x) / (e_x + e))
-                  skew_prime_y = (float(e_y) / (e_y + e))
+
+
+
+                  skew_x = (float(e_x) / (e_x + 2 * e_xy))
+                  skew_y = (float(e_y) / (e_y + 2 * e_xy))
+
+                  skew_prime_x = (float(e_x) / (e_x + e_xy))
+                  skew_prime_y = (float(e_y) / (e_y + e_xy))
+
+                  # for dealing with z
+                  more_edge_test = 1. / 3. * (e_x / (e_x + 2. * (e_xy + e_xz)) +  e_y / (e_y + 2. * (e_xy + e_zy)) + e_z / (e_z + 2. * (e_xz + e_zy)))
+                  more_half_edge_test = 1. / 3. * (e_x / (e_x +  (e_xy + e_xz)) +  e_y / (e_y + (e_xy + e_zy)) + e_z / (e_z + (e_xz + e_zy)))
+
 
                   x_square_sum = float(x0 * x0 + x1 * x1 + x2 * x2)
                   y_square_sum = float(y0 * y0 + y1 * y1 + y2 * y2)
@@ -152,17 +171,22 @@ for x0 in test_range:
                   dissim_sum = float(abs(x0 * total_pop - p0 * total_x) + abs(x1 * total_pop - p1 * total_x) + abs(x2 * total_pop - p2 * total_x))
                   gini_sum = 2. * float(abs(x0 * p1 - p0 * x1) +  abs(x0 * p2 - p0 * x2) + abs(x1 * p2 - p1 * x2))
 
-                  assert (single_brackets(x, y, A) == e)
+                  assert (single_brackets(x, y, A) == e_xy)
                   assert (skew(x, y, A) == skew_x)
                   assert (edge(x, y, A) == (0.5) * (skew_x + skew_y))
+                  assert (more_edge([x, y], A) == (0.5) * (skew_x + skew_y))
+                  np.testing.assert_approx_equal(more_edge([x, y, z], A), more_edge_test, significant=10)
+
                   assert (skew_prime(x, y, A) == skew_prime_x)
                   assert (half_edge(x, y, A) == (0.5) * (skew_prime_x + skew_prime_y))
+                  assert (more_half_edge([x, y], A) == (0.5) * (skew_prime_x + skew_prime_y))
+                  np.testing.assert_approx_equal(more_half_edge([x, y, z], A), more_half_edge_test, significant=10)
+
                   assert (half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / x_denom + y_square_sum / y_denom))
                   if (moran_denom > 0):
                     np.testing.assert_approx_equal(morans_I(x, A), (moran_num / moran_denom), significant=10)
                   np.testing.assert_approx_equal(dissimilarity(x, p), dissim_sum / pop_denom, significant=10)
                   np.testing.assert_approx_equal(gini(x, p), gini_sum / pop_denom, significant=10)
-
 
 
 
@@ -235,5 +259,4 @@ for x0 in test_range:
                               np.testing.assert_approx_equal(morans_I(x, A),(moran_num / moran_denom), significant=10)
                             np.testing.assert_approx_equal(dissimilarity(x, p),dissim_sum / pop_denom, significant=10)
                             np.testing.assert_approx_equal(gini(x, p), gini_sum / pop_denom, significant=10)
-
 

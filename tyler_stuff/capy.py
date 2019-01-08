@@ -18,6 +18,7 @@ def skew(x, y, A):
   x_prod = single_brackets(x, x, A)
   return float(x_prod) / float(x_prod + 2 * single_brackets(x, y, A))
 
+
 def edge(x, y, A):
   # JUST defined for 2 for now
 
@@ -27,6 +28,35 @@ def edge(x, y, A):
 
   edge_result = float(skew_sum) / float(2)
   return edge_result
+
+
+# more_edge is edge, handling more than 2 demographics
+# dem_list is a list of vectors like x,y from previous functions
+def more_edge(dem_list, A):
+  n = len(dem_list)
+  # first up, compute the single brackets (i,j) for all i,j in [n] x [n]
+  single_bracket_matrix = [[0 for i in range(n)] for j in range(n)]
+  for i in range(n):
+    for j in range(i,n):
+      single_bracket_matrix[i][j] = single_brackets(dem_list[i], dem_list[j], A)
+      # for ease of calling the values later,
+      single_bracket_matrix[j][i] = single_bracket_matrix[i][j]
+
+  skew_sum = 0.
+  for i in range(n):
+    skew_denom = 0.
+    for j in range(n):
+      skew_denom += single_bracket_matrix[i][j]
+    skew_denom *= 2.
+    skew_denom -= single_bracket_matrix[i][i]
+    skew_term = float((single_bracket_matrix[i][i])) / float(skew_denom)
+
+    skew_sum += skew_term
+
+  skew_sum /= float(n)
+  # then scale by 1/n
+  return skew_sum
+
 
 #<x,x> / (<x,x> + <x,y>)
 def skew_prime(x, y, A):
@@ -41,6 +71,30 @@ def half_edge(x, y, A):
     skew_sum += skew_prime(a, b, A)
   edge_result = float(skew_sum) / float(2)
   return edge_result
+
+# more_half_edge is half_edge, handling more than 2 demographics
+# dem_list is a list of vectors like x,y from previous functions
+def more_half_edge(dem_list, A):
+  n = len(dem_list)
+  # first up, compute the single brackets (i,j) for all i,j in [n] x [n]
+  single_bracket_matrix = [[0 for i in range(n)] for j in range(n)]
+  for i in range(n):
+    for j in range(i,n):
+      single_bracket_matrix[i][j] = single_brackets(dem_list[i], dem_list[j], A)
+      # for ease of calling the values later,
+      single_bracket_matrix[j][i] = single_bracket_matrix[i][j]
+
+  skew_p_sum = 0.
+  for i in range(n):
+    skew_p_denom = 0.
+    for j in range(n):
+      skew_p_denom += single_bracket_matrix[i][j]
+    skew_p_term = float((single_bracket_matrix[i][i])) / float(skew_p_denom)
+
+    skew_p_sum += skew_p_term
+
+  skew_p_sum /= float(n)
+  return skew_p_sum
 
 
 def half_edge_infinity(x, y, A):
@@ -119,28 +173,3 @@ def gini(x, total_pop_vector):
 
   # the factor of 2 is necessary because we technically sum over all n^2 pairs (i,j), but I only did distinct pairs, and we ignore i=j
   return first_term * accumulator * 2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
