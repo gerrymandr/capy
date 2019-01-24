@@ -1,0 +1,139 @@
+# for downloading city values from 2000
+# Tyler Piazza 1/24/19
+import numpy as np
+import networkx as nx
+import json
+import csv
+import matplotlib.pyplot as plt
+
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini
+
+# the cities that were saved easily from the extraction - deal with these first
+saved_cities = ['Los-Angeles-Long-Beach-Anaheim_CA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Washington-Arlington-Alexandria_DC-VA-MD-WV', 'San-Jose-Sunnyvale-Santa-Clara_CA', 'Dallas-Fort-Worth-Arlington_TX', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Houston-The-Woodlands-Sugar-Land_TX', 'Detroit-Warren-Dearborn_MI', 'Minneapolis-St-Paul-Bloomington_MN-WI', 'Denver-Aurora-Lakewood_CO', 'Cleveland-Elyria_OH', 'St-Louis_MO-IL', 'Orlando-Kissimmee-Sanford_FL', 'Sacramento--Roseville--Arden-Arcade_CA', 'Pittsburgh_PA', 'Charlotte-Concord-Gastonia_NC-SC', 'Cincinnati_OH-KY-IN', 'Kansas-City_MO-KS', 'Indianapolis-Carmel-Anderson_IN', 'Columbus_OH', 'Las-Vegas-Henderson-Paradise_NV', 'Austin-Round-Rock_TX', 'Milwaukee-Waukesha-West-Allis_WI', 'Raleigh_NC', 'Salt-Lake-City_UT', 'Nashville-Davidson--Murfreesboro--Franklin_TN', 'Greensboro-High-Point_NC', 'Louisville-Jefferson-County_KY-IN', 'Hartford-West-Hartford-East-Hartford_CT', 'Oklahoma-City_OK', 'Grand-Rapids-Wyoming_MI', 'Greenville-Anderson-Mauldin_SC', 'Buffalo-Cheektowaga-Niagara-Falls_NY', 'New-Orleans-Metairie_LA', 'Birmingham-Hoover_AL', 'Albany-Schenectady-Troy_NY', 'Rochester_NY', 'Fresno_CA', 'Dayton_OH', 'Knoxville_TN', 'Tulsa_OK', 'Omaha-Council-Bluffs_NE-IA', 'Little-Rock-North-Little-Rock-Conway_AR', 'Baton-Rouge_LA', 'Columbia_SC', 'Syracuse_NY', 'Toledo_OH', 'Chattanooga_TN-GA', 'Lexington-Fayette_KY', 'Harrisburg-Carlisle_PA', 'Youngstown-Warren-Boardman_OH-PA', 'Wichita_KS', 'Des-Moines-West-Des-Moines_IA', 'Madison_WI', 'Portland-South-Portland_ME', 'Fort-Wayne_IN', 'Mobile_AL', 'Huntsville_AL', 'Jackson_MS', 'Port-St-Lucie_FL', 'Lafayette_LA', 'York-Hanover_PA', 'Lansing-East-Lansing_MI', 'Kingsport-Bristol-Bristol_TN-VA']
+saved_cities = sorted(saved_cities)
+# the cities that needed extra work to get
+problem_cities_save_names = ['New-York-Newark-Jersey-City_NY-NJ-PA', 'Boston-Cambridge-Newton_MA-NH', 'Atlanta-Sandy-Springs-Roswell_GA', 'Seattle-Tacoma-Bellevue_WA', 'North-Port-Sarasota-Bradenton_FL', 'South-Bend-Mishawaka_IN-MI']
+
+
+b_scores = [[]]
+h_scores = [[]]
+a_scores = [[]]
+
+
+b_scores.append(["City", "Total polulation", "Percent Black", "Percent White", "Edge" , "HEdge", "HEdgeInfinity", "Dissimilarity", "Gini", "Moran's I"])
+
+
+bEdge = []
+bHEdge = []
+bDiss = []
+bFrey = []
+bAssort = []
+bMoran = []
+
+
+#we compute scores
+for city in saved_cities:
+    print (city)
+    with open('json2000/'+city+'_data.json') as f:
+        data = json.load(f)
+    #g = nx.adjacency_graph(data)
+    g = nx.readwrite.json_graph.adjacency_graph(data)
+    g = nx.convert_node_labels_to_integers(g)
+
+    num_vtds = g.number_of_nodes()
+
+    # get demographic and total population vectors
+    white = np.zeros((num_vtds,1))
+    black = np.zeros((num_vtds,1))
+    asian = np.zeros((num_vtds,1))
+    hisp = np.zeros((num_vtds,1))
+    amein = np.zeros((num_vtds,1))
+    natpac = np.zeros((num_vtds,1))
+    other = np.zeros((num_vtds,1))
+    tot = np.zeros((num_vtds,1))
+    nb = np.zeros((num_vtds,1))
+    nh = np.zeros((num_vtds,1))
+    na = np.zeros((num_vtds,1))
+
+    #here we add the demographics we want to compute the scores for. Currently we compute the scores for white - demographic and for demographic and its complementary set.
+    dems = [black, asian, hisp]
+    comps = [nb, na, nh]
+
+    # for 2000, from the codebook (and then the second code is what is in the shapefiles)
+    # I am ignoging 007 and 014 for now
+    # not hispanic
+    #FMS001 or nhgis00014:      Not Hispanic or Latino >> White alone
+    #FMS002 or nhgis00015:      Not Hispanic or Latino >> Black or African American alone
+    #FMS003 or nhgis00016:      Not Hispanic or Latino >> American Indian and Alaska Native alone
+    #FMS004 or nhgis00017:      Not Hispanic or Latino >> Asian alone
+    #FMS005 or nhgis00018:      Not Hispanic or Latino >> Native Hawaiian and Other Pacific Islander alone
+    #FMS006 or nhgis00019:      Not Hispanic or Latino >> Some other race alone
+
+    #FMS007 or nhgis00020:      Not Hispanic or Latino >> Two or more races
+
+    # hispanic
+    #FMS008 or nhgis00021:      Hispanic or Latino >> White alone
+    #FMS009 or nhgis00022:      Hispanic or Latino >> Black or African American alone
+    #FMS010 or nhgis00023:      Hispanic or Latino >> American Indian and Alaska Native alone
+    #FMS011 or nhgis00024:      Hispanic or Latino >> Asian alone
+    #FMS012 or nhgis00025:      Hispanic or Latino >> Native Hawaiian and Other Pacific Islander alone
+    #FMS013 or nhgis00026:      Hispanic or Latino >> Some other race alone
+
+    #FMS014 or nhgis00027:      Hispanic or Latino >> Two or more races
+
+    # assign demographic population per geographic unit
+    for i in range(g.number_of_nodes()):
+        # I assume that each category is discrete (there are no people in multiple categories)
+        white[i] = g.nodes[i]['nhgis00014']
+        black[i] = g.nodes[i]['nhgis00015']
+        asian[i] = g.nodes[i]['nhgis00017']
+
+        # add up the different variants of hispanic
+        hisp[i] = g.nodes[i]['nhgis00021'] + g.nodes[i]['nhgis00022'] + g.nodes[i]['nhgis00023'] + g.nodes[i]['nhgis00024'] + g.nodes[i]['nhgis00025'] + g.nodes[i]['nhgis00026']
+
+        natpac[i] = g.nodes[i]['nhgis00018']
+        other[i] = g.nodes[i]['nhgis00016'] + g.nodes[i]['nhgis00019']
+        # need to modify
+        tot[i] = white[i] + black[i] + asian[i] + hisp[i] + natpac[i] + other[i]
+        nb[i] = tot[i] - black[i]
+        nh[i] = tot[i] - hisp[i]
+        na[i] = tot[i] - asian[i]
+
+
+    # maybe I can use these vectors, sum them up, etc.
+    total_white = white.sum()
+    total_black = black.sum()
+    total_pop = tot.sum()
+
+    white_rho = float(total_white) / float(total_pop) * 100.
+    black_rho = float(total_black) / float(total_pop) * 100.
+
+    print "white_rho is " + str(white_rho) + " and black rho is " + str(black_rho)
+
+    # make adjacency matrix
+    A = nx.to_numpy_matrix(g)
+
+
+    #compute and store the energy scores in a csv
+    btemplist = []
+    # info, like name, population, black rho, and white rho (percentage of that pop in the city)
+    btemplist.append(city)
+    btemplist.append(total_pop)
+    btemplist.append(black_rho)
+    btemplist.append(white_rho)
+
+    # now compute interesting scoprs
+    btemplist.append(edge(black, white, A))
+    btemplist.append(half_edge(black, white, A))
+    btemplist.append(half_edge_infinity(black, white, A))
+    btemplist.append(dissimilarity(black, tot))
+    btemplist.append(gini(black, tot))
+    btemplist.append(morans_I(black,A))
+
+    b_scores.append(btemplist)
+
+
+
+with open('city scores BW_2000 with pop and rho.csv', 'w') as csvfile:
+    writer = csv.writer(csvfile, delimiter=",")
+    writer.writerows(b_scores)

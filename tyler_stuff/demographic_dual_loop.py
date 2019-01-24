@@ -43,12 +43,22 @@ good_city_file_names_1990 = ['Albany-Schenectady-Troy_NY', 'Ann-Arbor_MI', 'Athe
 bad_city_file_names_1990 = [ 'Boston-Cambridge-Newton,MA-NH','Duluth,MN-WI', 'Jacksonville,FL', 'New-York-Newark-Jersey-City,NY-NJ-PA','Tampa-St-Petersburg-Clearwater,FL', 'Virginia-Beach-Norfolk-Newport-News_VA-NC']
 """
 
+# from 2000
+"""
+# the cities that were saved easily from the extraction - deal with these first
+saved_cities = ['Los-Angeles-Long-Beach-Anaheim_CA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Washington-Arlington-Alexandria_DC-VA-MD-WV', 'San-Jose-Sunnyvale-Santa-Clara_CA', 'Dallas-Fort-Worth-Arlington_TX', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Houston-The-Woodlands-Sugar-Land_TX', 'Detroit-Warren-Dearborn_MI', 'Minneapolis-St-Paul-Bloomington_MN-WI', 'Denver-Aurora-Lakewood_CO', 'Cleveland-Elyria_OH', 'St-Louis_MO-IL', 'Orlando-Kissimmee-Sanford_FL', 'Sacramento--Roseville--Arden-Arcade_CA', 'Pittsburgh_PA', 'Charlotte-Concord-Gastonia_NC-SC', 'Cincinnati_OH-KY-IN', 'Kansas-City_MO-KS', 'Indianapolis-Carmel-Anderson_IN', 'Columbus_OH', 'Las-Vegas-Henderson-Paradise_NV', 'Austin-Round-Rock_TX', 'Milwaukee-Waukesha-West-Allis_WI', 'Raleigh_NC', 'Salt-Lake-City_UT', 'Nashville-Davidson--Murfreesboro--Franklin_TN', 'Greensboro-High-Point_NC', 'Louisville-Jefferson-County_KY-IN', 'Hartford-West-Hartford-East-Hartford_CT', 'Oklahoma-City_OK', 'Grand-Rapids-Wyoming_MI', 'Greenville-Anderson-Mauldin_SC', 'Buffalo-Cheektowaga-Niagara-Falls_NY', 'New-Orleans-Metairie_LA', 'Birmingham-Hoover_AL', 'Albany-Schenectady-Troy_NY', 'Rochester_NY', 'Fresno_CA', 'Dayton_OH', 'Knoxville_TN', 'Tulsa_OK', 'Omaha-Council-Bluffs_NE-IA', 'Little-Rock-North-Little-Rock-Conway_AR', 'Baton-Rouge_LA', 'Columbia_SC', 'Syracuse_NY', 'Toledo_OH', 'Chattanooga_TN-GA', 'Lexington-Fayette_KY', 'Harrisburg-Carlisle_PA', 'Youngstown-Warren-Boardman_OH-PA', 'Wichita_KS', 'Des-Moines-West-Des-Moines_IA', 'Madison_WI', 'Portland-South-Portland_ME', 'Fort-Wayne_IN', 'Mobile_AL', 'Huntsville_AL', 'Jackson_MS', 'Port-St-Lucie_FL', 'Lafayette_LA', 'York-Hanover_PA', 'Lansing-East-Lansing_MI', 'Kingsport-Bristol-Bristol_TN-VA']
+
+# the cities that needed extra work to get
+problem_cities_save_names = ['New-York-Newark-Jersey-City_NY-NJ-PA', 'Boston-Cambridge-Newton_MA-NH', 'Atlanta-Sandy-Springs-Roswell_GA', 'Seattle-Tacoma-Bellevue_WA', 'North-Port-Sarasota-Bradenton_FL', 'South-Bend-Mishawaka_IN-MI']
+"""
+
+
 
 #input your shape file
 
 for city in geometry_problem_1_subset:
 
-    # be sure to change the folder
+    # be sure to change the folder as needed
     county_shp = "Geometry_problem_shapefiles_1_2010 /"+city+".shp"
     print "I want to open the shapefile called " + county_shp
     df_counties = gpd.read_file(county_shp)
@@ -73,7 +83,7 @@ for city in geometry_problem_1_subset:
     #this just keeps track of progress
 
     # below are the relevent quantities that are used, by the codes in the files
-
+    # for 1990
     #nhgis00012: NOT HISPANIC, WHITE ALONE
     #nhgis00013: NOT HISPANIC, BLACK ALONE
     #nhgis00014: NOT HISPANIC, ASIAN ALONE
@@ -87,12 +97,38 @@ for city in geometry_problem_1_subset:
     #nhgis00020: HISPANIC, NATIVE HAWAIIAN/PACIFIC ISLANDER
     #nhgis00021: HISPANIC, OTHER RACE
 
+    # for 2000, from the codebook (and then the second code is what is in the shapefiles)
+    # I am ignoging 007 and 014 for now
+    # not hispanic
+    #FMS001 or nhgis00014:      Not Hispanic or Latino >> White alone
+    #FMS002 or nhgis00015:      Not Hispanic or Latino >> Black or African American alone
+    #FMS003 or nhgis00016:      Not Hispanic or Latino >> American Indian and Alaska Native alone
+    #FMS004 or nhgis00017:      Not Hispanic or Latino >> Asian alone
+    #FMS005 or nhgis00018:      Not Hispanic or Latino >> Native Hawaiian and Other Pacific Islander alone
+    #FMS006 or nhgis00019:      Not Hispanic or Latino >> Some other race alone
+
+    #FMS007 or nhgis00020:      Not Hispanic or Latino >> Two or more races
+
+    # hispanic
+    #FMS008 or nhgis00021:      Hispanic or Latino >> White alone
+    #FMS009 or nhgis00022:      Hispanic or Latino >> Black or African American alone
+    #FMS010 or nhgis00023:      Hispanic or Latino >> American Indian and Alaska Native alone
+    #FMS011 or nhgis00024:      Hispanic or Latino >> Asian alone
+    #FMS012 or nhgis00025:      Hispanic or Latino >> Native Hawaiian and Other Pacific Islander alone
+    #FMS013 or nhgis00026:      Hispanic or Latino >> Some other race alone
+
+    #FMS014 or nhgis00027:      Hispanic or Latino >> Two or more races
+
 
 
     # this line is if you are dealing with 2010 values
     graph = make_graph.construct_graph_from_file(county_shp, 'GEOID10', ['DP0110001', 'DP0110002','DP0110011','DP0110012','DP0110013', 'DP0110014','DP0110015', 'DP0110016'])
     # this line is if you want 1990 values
     #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00012', 'nhgis00013','nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021'], data_source_type="fiona")
+    # this line if you want 2000
+    # graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026'],data_source_type="fiona")
+
+
     nx.draw(graph)
 
 
