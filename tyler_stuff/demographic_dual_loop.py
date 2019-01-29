@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 print(os.getcwd())
 
 # from 2010
+
 mysterious_problems = [ 'Los Alamos NM', 'San Jose-Sunnyvale-Santa Clara CA','Wichita KS', ]
 
 index_problem = ['Atlanta-Sandy Springs-Roswell GA','Atlantic City - Hammonton NJ','Charlotte-Concord-Gastonia NC', 'Chattanooga TN-GA','Cleveland-Elyra OH', 'Detroit-Warren-Dearborn MI', 'Greensboro-High Point NC','Hartford CT','Milwaukee-Waukesha-West Allis WI','Raleigh NC', 'Washington-Arlington-Alexandria DC-VA-MD-WV',]
@@ -32,7 +33,7 @@ geometry_problem_1_subset = ['Albuquerque NM','Baltimore-Columbia-Towson MD','Ba
 
 
 # from 1990
-"""
+
 city_file_names_1990 = ['Albany-Schenectady-Troy_NY', 'Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Austin-Round-Rock_TX', 'Bloomington_IN', 'Boston-Cambridge-Newton,MA-NH', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT', 'Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Colorado-Springs_CO', 'Des-Moines-West-Des-Moines_IA', 'Duluth,MN-WI', 'El-Paso_TX', 'Flint_MI',  'Grand-Rapids-Wyoming_MI',  'Harrisburg-Carlisle_PA', 'Huntingdon_PA',  'Iowa-City_IA', 'Ithaca_NY', 'Jacksonville,FL', 'Junction-City_KS', 'Kansas-City_MO-KS', 'Lafayette-West-Lafayette_IN', 'Lancaster_PA', 'Las-Vegas-Henderson-Paradise_NV', 'Lincoln_NE','Madison_WI',  'Los-Angeles-Long-Beach-Anaheim_CA',  'McAllen-Edinburg-Mission_TX','Miami-Fort-Lauderdale-West-Palm-Beach_FL','New-Haven-Milford CT', 'New-Orleans-Metairie_LA', 'New-York-Newark-Jersey-City_NY-NJ-PA',  'Oklahoma-City_OK','Orlando-Kissimmee-Sanford_FL', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Phoenix-Mesa-Scottsdale_AZ', 'Pittsburgh_PA', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'Riverside-San-Bernardino-Ontario_CA', 'Rochester-NY',  'Salt-Lake-City_UT', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA','Syracuse_NY', 'Tallahassee_FL', 'Tampa-St-Petersburg-Clearwater,FL', 'Toledo_OH', 'Tucson_AZ', 'Tuscaloosa_AL','Virginia-Beach-Norfolk-Newport-News_VA-NC', 'Youngstown-Warren-Boardman_OH-PA']
 
 
@@ -41,25 +42,25 @@ good_city_file_names_1990 = ['Albany-Schenectady-Troy_NY', 'Ann-Arbor_MI', 'Athe
 
 # these are the ones that were hand picked, so they need special attention
 bad_city_file_names_1990 = [ 'Boston-Cambridge-Newton,MA-NH','Duluth,MN-WI', 'Jacksonville,FL', 'New-York-Newark-Jersey-City,NY-NJ-PA','Tampa-St-Petersburg-Clearwater,FL', 'Virginia-Beach-Norfolk-Newport-News_VA-NC']
-"""
+
 
 # from 2000
-"""
+
 # the cities that were saved easily from the extraction - deal with these first
 saved_cities = ['Los-Angeles-Long-Beach-Anaheim_CA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Washington-Arlington-Alexandria_DC-VA-MD-WV', 'San-Jose-Sunnyvale-Santa-Clara_CA', 'Dallas-Fort-Worth-Arlington_TX', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Houston-The-Woodlands-Sugar-Land_TX', 'Detroit-Warren-Dearborn_MI', 'Minneapolis-St-Paul-Bloomington_MN-WI', 'Denver-Aurora-Lakewood_CO', 'Cleveland-Elyria_OH', 'St-Louis_MO-IL', 'Orlando-Kissimmee-Sanford_FL', 'Sacramento--Roseville--Arden-Arcade_CA', 'Pittsburgh_PA', 'Charlotte-Concord-Gastonia_NC-SC', 'Cincinnati_OH-KY-IN', 'Kansas-City_MO-KS', 'Indianapolis-Carmel-Anderson_IN', 'Columbus_OH', 'Las-Vegas-Henderson-Paradise_NV', 'Austin-Round-Rock_TX', 'Milwaukee-Waukesha-West-Allis_WI', 'Raleigh_NC', 'Salt-Lake-City_UT', 'Nashville-Davidson--Murfreesboro--Franklin_TN', 'Greensboro-High-Point_NC', 'Louisville-Jefferson-County_KY-IN', 'Hartford-West-Hartford-East-Hartford_CT', 'Oklahoma-City_OK', 'Grand-Rapids-Wyoming_MI', 'Greenville-Anderson-Mauldin_SC', 'Buffalo-Cheektowaga-Niagara-Falls_NY', 'New-Orleans-Metairie_LA', 'Birmingham-Hoover_AL', 'Albany-Schenectady-Troy_NY', 'Rochester_NY', 'Fresno_CA', 'Dayton_OH', 'Knoxville_TN', 'Tulsa_OK', 'Omaha-Council-Bluffs_NE-IA', 'Little-Rock-North-Little-Rock-Conway_AR', 'Baton-Rouge_LA', 'Columbia_SC', 'Syracuse_NY', 'Toledo_OH', 'Chattanooga_TN-GA', 'Lexington-Fayette_KY', 'Harrisburg-Carlisle_PA', 'Youngstown-Warren-Boardman_OH-PA', 'Wichita_KS', 'Des-Moines-West-Des-Moines_IA', 'Madison_WI', 'Portland-South-Portland_ME', 'Fort-Wayne_IN', 'Mobile_AL', 'Huntsville_AL', 'Jackson_MS', 'Port-St-Lucie_FL', 'Lafayette_LA', 'York-Hanover_PA', 'Lansing-East-Lansing_MI', 'Kingsport-Bristol-Bristol_TN-VA']
 
 # the cities that needed extra work to get
 problem_cities_save_names = ['New-York-Newark-Jersey-City_NY-NJ-PA', 'Boston-Cambridge-Newton_MA-NH', 'Atlanta-Sandy-Springs-Roswell_GA', 'Seattle-Tacoma-Bellevue_WA', 'North-Port-Sarasota-Bradenton_FL', 'South-Bend-Mishawaka_IN-MI']
-"""
+
 
 
 
 #input your shape file
 
-for city in geometry_problem_1_subset:
+for city in problem_cities_save_names:
 
     # be sure to change the folder as needed
-    county_shp = "Geometry_problem_shapefiles_1_2010 /"+city+".shp"
+    county_shp = "2000_problem_city_shapefiles/"+city+".shp"
     print "I want to open the shapefile called " + county_shp
     df_counties = gpd.read_file(county_shp)
     df_counties.plot()
@@ -122,12 +123,13 @@ for city in geometry_problem_1_subset:
 
 
     # this line is if you are dealing with 2010 values
-    graph = make_graph.construct_graph_from_file(county_shp, 'GEOID10', ['DP0110001', 'DP0110002','DP0110011','DP0110012','DP0110013', 'DP0110014','DP0110015', 'DP0110016'])
+    #graph = make_graph.construct_graph_from_file(county_shp, 'GEOID10', ['DP0110001', 'DP0110002','DP0110011','DP0110012','DP0110013', 'DP0110014','DP0110015', 'DP0110016'])
     # this line is if you want 1990 values
     #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00012', 'nhgis00013','nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021'], data_source_type="fiona")
     # this line if you want 2000
-    # graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026'],data_source_type="fiona")
+    #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026'],data_source_type="fiona")
 
+    graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026'],data_source_type="fiona")
 
     nx.draw(graph)
 
@@ -137,14 +139,14 @@ for city in geometry_problem_1_subset:
 
     # per suggestion by Max, I'm going to delete geometry
 
-    """
+
     # this may have been necessary for 1990
     for node in graph.nodes:
         if str(graph.nodes[node]['boundary_node']) == "True":
             graph.nodes[node]['boundary_node'] = 'true'
         elif str(graph.nodes[node]['boundary_node']) == "False":
             graph.nodes[node]['boundary_node'] = 'false'
-    """
+
 
     #plt.show()
     #we're saving the demographic dual graph as a json, to compute the energies from.
@@ -153,7 +155,7 @@ for city in geometry_problem_1_subset:
     #print data
 
     print "about to write into file..."
-    with open("json10/"+city+"_data.json", "w") as f:
+    with open("json2000/"+city+"_data.json", "w") as f:
         json.dump(data, f)
 
 
