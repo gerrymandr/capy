@@ -41,8 +41,7 @@ city_file_names_1990 = ['Albany-Schenectady-Troy_NY', 'Ann-Arbor_MI', 'Athens-Cl
 good_city_file_names_1990 = ['Albany-Schenectady-Troy_NY', 'Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Austin-Round-Rock_TX', 'Bloomington_IN', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT', 'Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Colorado-Springs_CO', 'Des-Moines-West-Des-Moines_IA', 'El-Paso_TX', 'Flint_MI',  'Grand-Rapids-Wyoming_MI',  'Harrisburg-Carlisle_PA', 'Huntingdon_PA',  'Iowa-City_IA', 'Ithaca_NY', 'Junction-City_KS', 'Kansas-City_MO-KS', 'Lafayette-West-Lafayette_IN', 'Lancaster_PA', 'Las-Vegas-Henderson-Paradise_NV', 'Lincoln_NE','Madison_WI',  'Los-Angeles-Long-Beach-Anaheim_CA',  'McAllen-Edinburg-Mission_TX','Miami-Fort-Lauderdale-West-Palm-Beach_FL','New-Haven-Milford_CT', 'New-Orleans-Metairie_LA',  'Oklahoma-City_OK','Orlando-Kissimmee-Sanford_FL', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Phoenix-Mesa-Scottsdale_AZ', 'Pittsburgh_PA', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'Riverside-San-Bernardino-Ontario_CA', 'Rochester_NY',  'Salt-Lake-City_UT', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA','Syracuse_NY', 'Tallahassee_FL', 'Toledo_OH', 'Tucson_AZ', 'Tuscaloosa_AL', 'Youngstown-Warren-Boardman_OH-PA']
 
 # these are the ones that were hand picked, so they need special attention
-bad_city_file_names_1990 = [ 'Boston-Cambridge-Newton,MA-NH','Duluth,MN-WI', 'Jacksonville,FL', 'New-York-Newark-Jersey-City,NY-NJ-PA','Tampa-St-Petersburg-Clearwater,FL', 'Virginia-Beach-Norfolk-Newport-News_VA-NC']
-
+bad_city_file_names_1990 = ['Boston-Cambridge-Newton,MA-NH','Duluth,MN-WI', 'Jacksonville,FL', 'New-York-Newark-Jersey-City,NY-NJ-PA','Tampa-St-Petersburg-Clearwater,FL', 'Virginia-Beach-Norfolk-Newport-News,VA-NC']
 
 # from 2000
 
@@ -57,10 +56,10 @@ problem_cities_save_names = ['New-York-Newark-Jersey-City_NY-NJ-PA', 'Boston-Cam
 
 #input your shape file
 
-for city in problem_cities_save_names:
+for city in bad_city_file_names_1990:
 
     # be sure to change the folder as needed
-    county_shp = "2000_problem_city_shapefiles/"+city+".shp"
+    county_shp = "city_shapefiles_1990/"+city+".shp"
     print "I want to open the shapefile called " + county_shp
     df_counties = gpd.read_file(county_shp)
     df_counties.plot()
@@ -121,26 +120,22 @@ for city in problem_cities_save_names:
     #FMS014 or nhgis00027:      Hispanic or Latino >> Two or more races
 
 
-
+    # note: the id_col part may need to be removed for the cities that had to be extracted manually
     # this line is if you are dealing with 2010 values
     #graph = make_graph.construct_graph_from_file(county_shp, 'GEOID10', ['DP0110001', 'DP0110002','DP0110011','DP0110012','DP0110013', 'DP0110014','DP0110015', 'DP0110016'])
     # this line is if you want 1990 values
     #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00012', 'nhgis00013','nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021'], data_source_type="fiona")
+    graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00012', 'nhgis00013','nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021'], data_source_type="fiona")
+
     # this line if you want 2000
     #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026'],data_source_type="fiona")
-
-    graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026'],data_source_type="fiona")
 
     nx.draw(graph)
 
 
 
 
-
-    # per suggestion by Max, I'm going to delete geometry
-
-
-    # this may have been necessary for 1990
+    # this handles an annoying error where "True" is not serializable but "true" is
     for node in graph.nodes:
         if str(graph.nodes[node]['boundary_node']) == "True":
             graph.nodes[node]['boundary_node'] = 'true'
@@ -155,7 +150,7 @@ for city in problem_cities_save_names:
     #print data
 
     print "about to write into file..."
-    with open("json2000/"+city+"_data.json", "w") as f:
+    with open("json90/"+city+"_data.json", "w") as f:
         json.dump(data, f)
 
 
