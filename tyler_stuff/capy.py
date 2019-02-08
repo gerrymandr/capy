@@ -96,7 +96,10 @@ def more_half_edge(dem_list, A):
   skew_p_sum /= float(n)
   return skew_p_sum
 
-
+""" NOTE: this is referred to as "typo" in our literature. It is the incorrect
+formula for what is half edge. However, this "typo" ends up explaining the difference
+between edge and half edge
+"""
 def half_edge_infinity(x, y, A):
   x_square_sum = 0
   y_square_sum = 0
@@ -115,6 +118,34 @@ def half_edge_infinity(x, y, A):
   term2 = float(y_square_sum) / float(second_denom)
   result = (term1 + term2) / 2.
   return result
+
+"""  NOTE: this is the true "half edge infinity" (i.e. it is the limit of half
+edge as the weights in weighted single brackets go to infinity)
+
+"""
+def true_half_edge_infinity(x, y, A):
+  x_square_sum = 0
+  y_square_sum = 0
+  first_denom = 0
+  second_denom = 0
+  n = len(x)
+  for i in range(n):
+    a = x[i]
+    b = y[i]
+    x_square_sum += a * a
+    y_square_sum += b * b
+    # the only difference between this half edge infinity and the "typo"
+    # are the following two lines of code. Notice that a + becomes a * and vice
+    #versa  so the first_denom should be sum x_i^2 + sum x_iy_i
+    first_denom += a * a + a * b
+    second_denom += b * b + a * b
+
+  term1 = float(x_square_sum) / float(first_denom)
+  term2 = float(y_square_sum) / float(second_denom)
+  result = (term1 + term2) / 2.
+  return result
+
+
 
 
 # just runs over pairs i,j such that i<j, and sums the matrix, then multiplies by 2

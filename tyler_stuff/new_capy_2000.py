@@ -6,7 +6,7 @@ import json
 import csv
 import matplotlib.pyplot as plt
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity
 
 # the cities that were saved easily from the extraction - deal with these first
 saved_cities = ['Los-Angeles-Long-Beach-Anaheim_CA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Washington-Arlington-Alexandria_DC-VA-MD-WV', 'San-Jose-Sunnyvale-Santa-Clara_CA', 'Dallas-Fort-Worth-Arlington_TX', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Houston-The-Woodlands-Sugar-Land_TX', 'Detroit-Warren-Dearborn_MI', 'Minneapolis-St-Paul-Bloomington_MN-WI', 'Denver-Aurora-Lakewood_CO', 'Cleveland-Elyria_OH', 'St-Louis_MO-IL', 'Orlando-Kissimmee-Sanford_FL', 'Sacramento--Roseville--Arden-Arcade_CA', 'Pittsburgh_PA', 'Charlotte-Concord-Gastonia_NC-SC', 'Cincinnati_OH-KY-IN', 'Kansas-City_MO-KS', 'Indianapolis-Carmel-Anderson_IN', 'Columbus_OH', 'Las-Vegas-Henderson-Paradise_NV', 'Austin-Round-Rock_TX', 'Milwaukee-Waukesha-West-Allis_WI', 'Raleigh_NC', 'Salt-Lake-City_UT', 'Nashville-Davidson--Murfreesboro--Franklin_TN', 'Greensboro-High-Point_NC', 'Louisville-Jefferson-County_KY-IN', 'Hartford-West-Hartford-East-Hartford_CT', 'Oklahoma-City_OK', 'Grand-Rapids-Wyoming_MI', 'Greenville-Anderson-Mauldin_SC', 'Buffalo-Cheektowaga-Niagara-Falls_NY', 'New-Orleans-Metairie_LA', 'Birmingham-Hoover_AL', 'Albany-Schenectady-Troy_NY', 'Rochester_NY', 'Fresno_CA', 'Dayton_OH', 'Knoxville_TN', 'Tulsa_OK', 'Omaha-Council-Bluffs_NE-IA', 'Little-Rock-North-Little-Rock-Conway_AR', 'Baton-Rouge_LA', 'Columbia_SC', 'Syracuse_NY', 'Toledo_OH', 'Chattanooga_TN-GA', 'Lexington-Fayette_KY', 'Harrisburg-Carlisle_PA', 'Youngstown-Warren-Boardman_OH-PA', 'Wichita_KS', 'Des-Moines-West-Des-Moines_IA', 'Madison_WI', 'Portland-South-Portland_ME', 'Fort-Wayne_IN', 'Mobile_AL', 'Huntsville_AL', 'Jackson_MS', 'Port-St-Lucie_FL', 'Lafayette_LA', 'York-Hanover_PA', 'Lansing-East-Lansing_MI', 'Kingsport-Bristol-Bristol_TN-VA']
@@ -22,7 +22,7 @@ h_scores = [[]]
 a_scores = [[]]
 
 
-b_scores.append(["City", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity", "HEdgeInfinity rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank"])
+b_scores.append(["City", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank"])
 
 
 bEdge = []
@@ -127,6 +127,9 @@ for city in city_names:
     # now compute interesting scoprs
     btemplist.append(edge(black, white, A))
     btemplist.append(half_edge(black, white, A))
+    # note: this is the real half edge infinity
+    btemplist.append(true_half_edge_infinity(black, white, A))
+    # note - this is the TYPO half edge infinity
     btemplist.append(half_edge_infinity(black, white, A))
     btemplist.append((dissimilarity(black, tot)[0]))
     btemplist.append((gini(black, tot)[0]))
@@ -157,16 +160,17 @@ def rank_column(matrix, i):
 # for saving ranks - 1 means largest number, 2 means 2nd largest number, etc.
 rank_matrix = []
 
-for i in range(4, 10):
+# modify this to 11 (it used to be 10)
+for i in range(4, 11):
     rank_matrix.append(rank_column(b_scores, i))
 
 # interleaves the scores and the rankings (yes, this should be done programatically)
 for i in range(len(b_scores) - 2):
     now_row = b_scores[i + 2]
     rank = column(rank_matrix, i, k=0)
-    b_scores[i + 2] = now_row[0:5] + [rank[0], now_row[5], rank[1], now_row[6], rank[2], now_row[7], rank[3], now_row[8], rank[4], now_row[9], rank[5]]
+    b_scores[i + 2] = now_row[0:5] + [rank[0], now_row[5], rank[1], now_row[6], rank[2], now_row[7], rank[3], now_row[8], rank[4], now_row[9], rank[5], now_row[10], rank[6]]
 
 
-with open('city scores BW_2000 with pop and rho and ranking.csv', 'w') as csvfile:
+with open('city scores BW_2000 true HalfEdgeInfinity.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)

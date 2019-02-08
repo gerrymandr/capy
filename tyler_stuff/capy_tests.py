@@ -7,7 +7,7 @@ import csv
 import matplotlib.pyplot as plt
 import random
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge
 
 # this is what we range the scalar values of x and y (if you increase the range, the time for the tests to run goes up)
 test_range = range(1,3)
@@ -76,6 +76,9 @@ for x0 in test_range:
           y_square_sum = float(y0 * y0 + y1 * y1)
           x_denom = float(x0 + x0 * x0 * y0 + x1 + x1 * x1 * y1)
           y_denom = float(y0 + y0 * x0 * y0 + y1 + y1 * x1 * y1)
+          # then for the true half edge infinity
+          true_x_denom = float(x0 * x0 + x0 * y0 + x1 * x1 + x1 * y1)
+          true_y_denom = float(y0 * y0 + x0 * y0 + y1 * y1 + x1 * y1)
 
           # for testing moran's I
           n = 2.
@@ -96,6 +99,7 @@ for x0 in test_range:
           assert (skew_prime(x, y, A) == skew_prime_x)
           assert (half_edge(x, y, A) == (0.5) * (skew_prime_x + skew_prime_y))
           assert (half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / x_denom + y_square_sum / y_denom))
+          assert (true_half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / true_x_denom + y_square_sum / true_y_denom))
           if (c > 0) and not (x_avg == x0):
             assert (morans_I(x, A) == moran_num / moran_denom)
           assert(dissimilarity(x, p) == dissim_sum / pop_denom)
@@ -160,6 +164,11 @@ for x0 in test_range:
                         y_square_sum = float(y0 * y0 + y1 * y1 + y2 * y2)
                         x_denom = float(x0 + x0 * x0 * y0 + x1 + x1 * x1 * y1 + x2 + x2 * x2 * y2)
                         y_denom = float(y0 + y0 * x0 * y0 + y1 + y1 * x1 * y1 + y2 + y2 * x2 * y2)
+                        # for the true half edge infinity
+                        true_x_denom = float(x0 * x0 + x0 * y0 + x1 * x1 + x1 * y1 + x2 * x2 + x2 * y2)
+                        true_y_denom = float(y0 * y0 + x0 * y0 + y1 * y1 + x1 * y1 + y2 * y2 + x2 * y2)
+
+
 
                         n = 3.
                         x_avg = float(x0 + x1 + x2) / n
@@ -183,6 +192,7 @@ for x0 in test_range:
                         np.testing.assert_approx_equal(more_half_edge([x, y, z], A), more_half_edge_test, significant=10)
 
                         assert (half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / x_denom + y_square_sum / y_denom))
+                        assert (true_half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / true_x_denom + y_square_sum / true_y_denom))
                         if (moran_denom > 0):
                           np.testing.assert_approx_equal(morans_I(x, A), (moran_num / moran_denom), significant=10)
                         np.testing.assert_approx_equal(dissimilarity(x, p), dissim_sum / pop_denom, significant=10)
@@ -235,6 +245,10 @@ for x0 in test_range:
                             y_square_sum = float(y0 * y0 + y1 * y1 + y2 * y2 + y3 * y3)
                             x_denom = float(x0 + x0 * x0 * y0 + x1 + x1 * x1 * y1 + x2 + x2 * x2 * y2 + x3 + x3 * x3 * y3)
                             y_denom = float(y0 + y0 * x0 * y0 + y1 + y1 * x1 * y1 + y2 + y2 * x2 * y2 + y3 + y3 * x3 * y3)
+                            # for the true half edge infinity
+                            true_x_denom = float(x0 * x0 + x0 * y0 + x1 * x1 + x1 * y1 + x2 * x2 + x2 * y2 + x3 * x3 + x3 * y3)
+                            true_y_denom = float(y0 * y0 + x0 * y0 + y1 * y1 + x1 * y1 + y2 * y2 + x2 * y2 + y3 * y3 + x3 * y3)
+
 
                             n = 4.
                             x_avg = float(x0 + x1 + x2 + x3) / n
@@ -254,6 +268,7 @@ for x0 in test_range:
                             assert (skew_prime(x, y, A) == skew_prime_x)
                             assert (half_edge(x, y, A) == (0.5) * (skew_prime_x + skew_prime_y))
                             assert (half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / x_denom + y_square_sum / y_denom))
+                            assert (true_half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / true_x_denom + y_square_sum / true_y_denom))
 
                             if (moran_denom > 0):
                               np.testing.assert_approx_equal(morans_I(x, A),(moran_num / moran_denom), significant=10)
