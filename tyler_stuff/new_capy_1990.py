@@ -34,7 +34,7 @@ h_scores = [[]]
 a_scores = [[]]
 
 
-b_scores.append(["City", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank"])
+b_scores.append(["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank"])
 
 bEdge = []
 bHEdge = []
@@ -86,9 +86,12 @@ for city in city_names_1990:
     #nhgis00019: HISPANIC, ASIAN
     #nhgis00020: HISPANIC, NATIVE HAWAIIAN/PACIFIC ISLANDER
     #nhgis00021: HISPANIC, OTHER RACE
-
+    n_tracts = g.number_of_nodes()
+    if n_tracts <= 30:
+        print "NUMBER OF TRACTS IS LOW: " + str(n_tracts)
+        continue
     # assign demographic population per geographic unit
-    for i in range(g.number_of_nodes()):
+    for i in range(n_tracts):
         # I assume that each category is discrete (there are no people in multiple categories)
         white[i] = g.nodes[i]['nhgis00012']
         black[i] = g.nodes[i]['nhgis00013']
@@ -125,6 +128,7 @@ for city in city_names_1990:
     btemplist = []
     # info, like name, population, black rho, and white rho (percentage of that pop in the city)
     btemplist.append(city)
+    btemplist.append(n_tracts)
     btemplist.append(total_pop)
     btemplist.append(black_rho)
     btemplist.append(white_rho)
@@ -165,17 +169,17 @@ def rank_column(matrix, i):
 # for saving ranks - 1 means largest number, 2 means 2nd largest number, etc.
 rank_matrix = []
 
-for i in range(4, 11):
+for i in range(5, 12):
     rank_matrix.append(rank_column(b_scores, i))
 
 # interleaves the scores and the rankings (yes, this should be done programatically)
 for i in range(len(b_scores) - 2):
     now_row = b_scores[i + 2]
     rank = column(rank_matrix, i, k=0)
-    b_scores[i + 2] = now_row[0:5] + [rank[0], now_row[5], rank[1], now_row[6], rank[2], now_row[7], rank[3], now_row[8], rank[4], now_row[9], rank[5], now_row[10], rank[6]]
+    b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]]
 
 
 
-with open('POC_W_capy_scores_1990.csv', 'w') as csvfile:
+with open('POC_W_capy_scores_1990_with_rank_cutoff.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)

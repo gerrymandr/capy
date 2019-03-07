@@ -32,6 +32,20 @@ geometry_problem_1_subset = ['Albuquerque NM','Baltimore-Columbia-Towson MD','Ba
 #cities = ['Albany-Schenectady-Troy', 'Ann Arbor MI', 'Athens-Clark County GA', 'Austin-Round Rock TX', 'Bloomington IN', 'Boston-Cambridge-Newton MA', 'Boulder CO', 'Bridgeport-Stamford-Norwalk CT', 'Burlington-South Burlington VT', 'Cedar Rapids IA', 'Chicago-Naperville-Elgin IL-IN-WI', 'Colorado Springs CO', 'Des Moines-West Des Moines IA', 'Duluth MN-WI', 'El Paso TX', 'Flint MI',  'Grand Rapids-Wyoming MI',  'Harrisburg-Carlisle PA', 'Huntingdon PA',  'Iowa city IA', 'Ithaca NY', 'Jacksonville FL', 'Junction City KS', 'Kansas city MO-KS', 'Lafayette-West Lafayette IN', 'Lancaster PA', 'Las Vegas-Henderson-Paradise NV', 'Lincoln NE','Madison WI',  'Los Angeles-Long Beach-Anaheim CA',  'McAllen-Edingburg-Mission TX','Miami-Fort Lauderdale-West Palm Beach FL','New Haven-Milford CT', 'New Orleans-Metairie LA', 'New York-Newark-Jersey City NY-NJ-PA',  'Oklahoma City-OK','Orlando-Kissimmee-Sanford FL', 'Philadelphia-Camden-Wilmington PA-NJ-DE-MD', 'Phoenix-Mesa-Scottsdale AZ', 'Pittsburgh PA', 'Plattsburgh NY', 'Providence-Warwick RI-MA', 'Reno NV', 'Rio Grande City TX', 'Riverside-San Bernadino-Ontario CA', 'Rochester NY',  'Salt Lake City UT', 'San Antonio-New Braunfels TX', 'San Diego-Carlsbad CA', 'Santa Cruz-Watsonville CA', 'Santa Fe NM', 'Savannah GA','Syracuse NY', 'Tallahassee FL', 'Tampa-St Petersburg-Clearwater FL', 'Toledo OH', 'Tucson AZ', 'Tuscaloosa AL','Virginia Beach-Norfolk-Newport News VA-NC', 'Youngstown-Warren-Boardman OH-PA']
 
 
+
+# commented cities below are cities that I removed because they had weird errors
+#'Athens-Clarke-County_GA'
+#'Burlington-South-Burlington_VT'#
+additional_2010_filenames = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomington_IN', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT', 'Buffalo-Cheektowaga-Niagara-Falls_NY','Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Colorado-Springs_CO','Duluth,MN-WI', 'El-Paso_TX', 'Flint_MI', 'Huntingdon_PA', 'Iowa-City_IA', 'Ithaca_NY', 'Jacksonville,FL', 'Junction-City_KS', 'Kingsport-Bristol-Bristol_TN-VA', 'Lancaster_PA', 'Lincoln_NE', 'McAllen-Edinburg-Mission_TX', 'Miami-Fort-Lauderdale-West-Palm-Beach_FL', 'New-Haven-Milford_CT', 'Phoenix-Mesa-Scottsdale_AZ', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA', 'Tallahassee_FL', 'Tampa-St-Petersburg-Clearwater,FL', 'Tucson_AZ', 'Tuscaloosa_AL', 'Virginia-Beach-Norfolk-Newport-News,VA-NC']
+
+
+
+
+
+
+
+
+
 # from 1990
 
 city_file_names_1990 = ['Albany-Schenectady-Troy_NY', 'Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Austin-Round-Rock_TX', 'Bloomington_IN', 'Boston-Cambridge-Newton,MA-NH', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT', 'Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Chicago-Naperville-Elgin_IL-IN-WI', 'Colorado-Springs_CO', 'Des-Moines-West-Des-Moines_IA', 'Duluth,MN-WI', 'El-Paso_TX', 'Flint_MI',  'Grand-Rapids-Wyoming_MI',  'Harrisburg-Carlisle_PA', 'Huntingdon_PA',  'Iowa-City_IA', 'Ithaca_NY', 'Jacksonville,FL', 'Junction-City_KS', 'Kansas-City_MO-KS', 'Lafayette-West-Lafayette_IN', 'Lancaster_PA', 'Las-Vegas-Henderson-Paradise_NV', 'Lincoln_NE','Madison_WI',  'Los-Angeles-Long-Beach-Anaheim_CA',  'McAllen-Edinburg-Mission_TX','Miami-Fort-Lauderdale-West-Palm-Beach_FL','New-Haven-Milford CT', 'New-Orleans-Metairie_LA', 'New-York-Newark-Jersey-City_NY-NJ-PA',  'Oklahoma-City_OK','Orlando-Kissimmee-Sanford_FL', 'Philadelphia-Camden-Wilmington_PA-NJ-DE-MD', 'Phoenix-Mesa-Scottsdale_AZ', 'Pittsburgh_PA', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'Riverside-San-Bernardino-Ontario_CA', 'Rochester-NY',  'Salt-Lake-City_UT', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA','Syracuse_NY', 'Tallahassee_FL', 'Tampa-St-Petersburg-Clearwater,FL', 'Toledo_OH', 'Tucson_AZ', 'Tuscaloosa_AL','Virginia-Beach-Norfolk-Newport-News_VA-NC', 'Youngstown-Warren-Boardman_OH-PA']
@@ -75,11 +89,10 @@ total_new_for_2000 = cities_from_1990_names + cities_1990_need_manual
 
 
 #input your shape file
-
-for city in saved_cities:
+for city in ['Athens-Clarke-County_GA']:
 
     # be sure to change the folder as needed
-    county_shp = "2000_city_shapefiles/"+city+".shp"
+    county_shp = "shapefiles_2010_more/"+city+".shp"
     print "I want to open the shapefile called " + county_shp
     df_counties = gpd.read_file(county_shp)
     df_counties.plot()
@@ -137,6 +150,33 @@ for city in saved_cities:
     #FMS014 or nhgis00027:      Hispanic or Latino >> Two or more races
 
 
+
+
+    # for 2010, for the newer cities
+    """
+    #H7Z001 - nhgis00014:      Total
+    H7Z002 - nhgis00015:      Not Hispanic or Latino
+    H7Z003 - nhgis00016:      Not Hispanic or Latino: White alone
+    H7Z004 - nhgis00017:      Not Hispanic or Latino: Black or African American alone
+    H7Z005 - nhgis00018:      Not Hispanic or Latino: American Indian and Alaska Native alone
+    H7Z006 - nhgis00019:      Not Hispanic or Latino: Asian alone
+    H7Z007 - nhgis00020:      Not Hispanic or Latino: Native Hawaiian and Other Pacific Islander alone
+    H7Z008 - nhgis00021:      Not Hispanic or Latino: Some Other Race alone
+    H7Z009 - nhgis00022:      Not Hispanic or Latino: Two or More Races
+    H7Z010 - nhgis00023:      Hispanic or Latino
+    H7Z011 - nhgis00024:      Hispanic or Latino: White alone
+    H7Z012 - nhgis00025:      Hispanic or Latino: Black or African American alone
+    H7Z013 - nhgis00026:      Hispanic or Latino: American Indian and Alaska Native alone
+    H7Z014 - nhgis00027:      Hispanic or Latino: Asian alone
+    H7Z015 - nhgis00028:      Hispanic or Latino: Native Hawaiian and Other Pacific Islander alone
+    H7Z016 - nhgis00029:      Hispanic or Latino: Some Other Race alone
+    H7Z017 - nhgis00030:      Hispanic or Latino: Two or More Races
+    """
+
+
+
+
+
     # note: the id_col part may need to be removed for the cities that had to be extracted manually
     # this line is if you are dealing with 2010 values
     #graph = make_graph.construct_graph_from_file(county_shp, 'GEOID10', ['DP0110001', 'DP0110002','DP0110011','DP0110012','DP0110013', 'DP0110014','DP0110015', 'DP0110016'])
@@ -147,7 +187,7 @@ for city in saved_cities:
     # this line if you want 2000
     #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026', 'nhgis00027'],data_source_type="fiona")
 
-    graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026', 'nhgis00027'],data_source_type="fiona")
+    graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026', 'nhgis00027', 'nhgis00028', 'nhgis00029', 'nhgis00030'],data_source_type="fiona")
 
     nx.draw(graph)
 
@@ -169,7 +209,7 @@ for city in saved_cities:
     #print data
 
     print "about to write into file..."
-    with open("json2000/"+city+"_data.json", "w") as f:
+    with open("json2010new/"+city+"_data.json", "w") as f:
         json.dump(data, f)
 
 
