@@ -7,7 +7,7 @@ import csv
 import matplotlib.pyplot as plt
 import random
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge, standard_dev_of_pop
 
 # this is what we range the scalar values of x and y (if you increase the range, the time for the tests to run goes up)
 test_range = range(1,3)
@@ -34,6 +34,11 @@ e2_ = (1 * 1 + 6 * 6 + 2 * 2) + (1 * 6 + 6 * 1) + (2 * 6 + 6 * 2)
 assert (single_brackets(x1, y1, A1) == e1)
 assert (single_brackets(x2, y2, A2) == e2)
 assert (skew(x2, y2, A2) == float(e2_) / float(e2_ + 2 * e2))
+
+
+# for standard deviation
+test_pop = np.array([600., 470., 170., 430. , 300.])
+assert(int(standard_dev_of_pop(test_pop)) == 147)
 
 
 

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import os
 import csv
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity, standard_dev_of_pop
 
 
 
@@ -206,6 +206,11 @@ for city in additional_2010_filenames:
     btemplist.append((dissimilarity(poc, tot)[0]))
     btemplist.append((gini(poc, tot)[0]))
     btemplist.append(morans_I(poc, A))
+    # for standard deviations
+    btemplist.append(standard_dev_of_pop(tot))
+
+
+
     b_scores.append(btemplist)
 
 
@@ -369,7 +374,13 @@ for filename in os.listdir("2010_JSONS"):
     btemplist.append((dissimilarity(poc, tot)[0]))
     btemplist.append((gini(poc, tot)[0]))
     btemplist.append(morans_I(poc, A))
+    # for standard deviations
+    btemplist.append(standard_dev_of_pop(tot))
+
+
+
     b_scores.append(btemplist)
+
 
 
 
@@ -421,7 +432,7 @@ rank_matrix = []
 # sort by city names
 b_scores = sorted(b_scores)
 # appending the info that the other things have
-b_scores = [[], ["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank"]] + b_scores
+b_scores = [[], ["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank", "Population standard deviation"]] + b_scores
 
 
 
@@ -432,22 +443,13 @@ for i in range(5, 12):
     rank_matrix.append(rank_column(b_scores, i))
 
 
-
-#print "not sorted"
-
-print "removed empty row"
-# interleaves the scores and the rankings (yes, this should be done programatically)
 # interleaves the scores and the rankings (yes, this should be done programatically)
 for i in range(len(b_scores) - 2):
     now_row = b_scores[i + 2]
     rank = column(rank_matrix, i, k=0)
-    # used to be now row 5, now row 7, etc. in the model of it
-    b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]]
 
+    b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12]]
 
-
-
-
-with open('POC_W_capy_scores_2010_more_cities_with_rank_cutoff.csv', 'w') as csvfile:
+with open('2010_with_standard_dev.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)

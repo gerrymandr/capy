@@ -204,3 +204,13 @@ def gini(x, total_pop_vector):
 
   # the factor of 2 is necessary because we technically sum over all n^2 pairs (i,j), but I only did distinct pairs, and we ignore i=j
   return first_term * accumulator * 2
+
+# compute evenness of population across tracts/units
+def standard_dev_of_pop(total_pop_vector):
+  return np.std(total_pop_vector)
+
+
+
+
+
+
