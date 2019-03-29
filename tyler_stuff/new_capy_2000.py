@@ -14,7 +14,8 @@ saved_cities = ['Los-Angeles-Long-Beach-Anaheim_CA', 'Santa-Fe_NM', 'Chicago-Nap
 problem_cities_save_names = ['New-York-Newark-Jersey-City_NY-NJ-PA', 'Boston-Cambridge-Newton_MA-NH', 'Atlanta-Sandy-Springs-Roswell_GA', 'Seattle-Tacoma-Bellevue_WA', 'North-Port-Sarasota-Bradenton_FL', 'South-Bend-Mishawaka_IN-MI']
 
 # new
-cities_from_1990_names = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomington_IN', 'Bridgeport-Stamford-Norwalk_CT', 'Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Colorado-Springs_CO', 'El-Paso_TX', 'Flint_MI', 'Iowa-City_IA', 'Ithaca_NY', 'Junction-City_KS', 'Lancaster_PA', 'Lincoln_NE', 'McAllen-Edinburg-Mission_TX', 'Miami-Fort-Lauderdale-West-Palm-Beach_FL', 'New-Haven-Milford_CT', 'Phoenix-Mesa-Scottsdale_AZ', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'San-Antonio-New-Braunfels_TX', 'Santa-Cruz-Watsonville_CA', 'Savannah_GA', 'Syracuse_NY', 'Tallahassee_FL', 'Tucson_AZ', 'Tuscaloosa_AL']
+# removed 'Ithaca_NY' to get 100 cities
+cities_from_1990_names = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomington_IN', 'Bridgeport-Stamford-Norwalk_CT', 'Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Colorado-Springs_CO', 'El-Paso_TX', 'Flint_MI', 'Iowa-City_IA', 'Junction-City_KS', 'Lancaster_PA', 'Lincoln_NE', 'McAllen-Edinburg-Mission_TX', 'Miami-Fort-Lauderdale-West-Palm-Beach_FL', 'New-Haven-Milford_CT', 'Phoenix-Mesa-Scottsdale_AZ', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'San-Antonio-New-Braunfels_TX', 'Santa-Cruz-Watsonville_CA', 'Savannah_GA', 'Syracuse_NY', 'Tallahassee_FL', 'Tucson_AZ', 'Tuscaloosa_AL']
 # removed 'Riverside-San-Bernardino-Ontario_CA' and 'Jackson_MS'
 cities_1990_need_manual = ['Boulder_CO', 'Duluth_MN-WI', 'Huntingdon_PA', 'Jacksonville_FL', 'San-Diego-Carlsbad_CA', 'Tampa-St-Petersburg-Clearwater_FL', 'Virginia-Beach-Norfolk-Newport-News_VA-NC']
 
@@ -194,6 +195,6 @@ for i in range(len(b_scores) - 2):
     b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12]]
 
 
-with open('2000_with_standard_dev.csv', 'w') as csvfile:
+with open('2000_for_3_29_2019_100_cities.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)

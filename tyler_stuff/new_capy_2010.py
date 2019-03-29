@@ -14,8 +14,8 @@ from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_i
 
 
 # added as of 3/6/19 to match the cities from 1990 and 2000
-additional_2010_filenames = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomington_IN', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT','Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Colorado-Springs_CO','Duluth,MN-WI', 'El-Paso_TX', 'Flint_MI', 'Huntingdon_PA', 'Iowa-City_IA', 'Ithaca_NY', 'Jacksonville,FL', 'Junction-City_KS', 'Kingsport-Bristol-Bristol_TN-VA', 'Lancaster_PA', 'Lincoln_NE', 'McAllen-Edinburg-Mission_TX', 'Miami-Fort-Lauderdale-West-Palm-Beach_FL', 'New-Haven-Milford_CT', 'Phoenix-Mesa-Scottsdale_AZ', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA', 'Tallahassee_FL', 'Tampa-St-Petersburg-Clearwater,FL', 'Tucson_AZ', 'Tuscaloosa_AL', 'Virginia-Beach-Norfolk-Newport-News,VA-NC']
-
+additional_2010_filenames = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomington_IN', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT','Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Colorado-Springs_CO','Duluth,MN-WI', 'El-Paso_TX', 'Flint_MI', 'Huntingdon_PA', 'Iowa-City_IA', 'Jacksonville,FL', 'Junction-City_KS', 'Kingsport-Bristol-Bristol_TN-VA', 'Lancaster_PA', 'Lincoln_NE', 'McAllen-Edinburg-Mission_TX', 'Miami-Fort-Lauderdale-West-Palm-Beach_FL', 'New-Haven-Milford_CT', 'Phoenix-Mesa-Scottsdale_AZ', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA', 'Tallahassee_FL', 'Tampa-St-Petersburg-Clearwater,FL', 'Tucson_AZ', 'Tuscaloosa_AL', 'Virginia-Beach-Norfolk-Newport-News,VA-NC']
+# I removed 'Ithaca_NY' to get exactly 100 cities
 
 
 
@@ -450,6 +450,6 @@ for i in range(len(b_scores) - 2):
 
     b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12]]
 
-with open('2010_with_standard_dev.csv', 'w') as csvfile:
+with open('2010_for_3_29_2019_100_cities.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)
