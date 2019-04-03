@@ -7,7 +7,7 @@ import csv
 import matplotlib.pyplot as plt
 import random
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge, standard_dev_of_pop
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge, standard_dev_of_pop, network_statistics
 
 # this is what we range the scalar values of x and y (if you increase the range, the time for the tests to run goes up)
 test_range = range(1,3)
@@ -34,6 +34,22 @@ e2_ = (1 * 1 + 6 * 6 + 2 * 2) + (1 * 6 + 6 * 1) + (2 * 6 + 6 * 2)
 assert (single_brackets(x1, y1, A1) == e1)
 assert (single_brackets(x2, y2, A2) == e2)
 assert (skew(x2, y2, A2) == float(e2_) / float(e2_ + 2 * e2))
+
+
+deg_dict_1 = network_statistics(A1)
+assert(deg_dict_1["mean"] == 1)
+assert(deg_dict_1["std_dev"] == 0)
+assert(deg_dict_1["max"] == 1)
+assert(deg_dict_1["min"] == 1)
+
+deg_dict_2 = network_statistics(A2)
+np.testing.assert_approx_equal(deg_dict_2["mean"], (4. / 3.), significant=3)
+np.testing.assert_approx_equal(deg_dict_2["std_dev"], 0.47140452079103, significant=3)
+assert(deg_dict_2["max"] == 2)
+assert(deg_dict_2["min"] == 1)
+
+
+
 
 
 # for standard deviation

@@ -211,6 +211,41 @@ def standard_dev_of_pop(total_pop_vector):
 
 
 
+def network_statistics(A):
+  # first, get a vector that is the sum of the rows of A
+  n = len(A)
+  degrees = []
+  for i in range(n):
+    degree_counter = 0
+    for j in range(n):
+      degree_counter += A[i,j]
+    degrees.append(degree_counter)
+
+
+
+  degree_val_dict = {}
+  degree_val_dict["max"] = max(degrees)
+  degree_val_dict["min"] = min(degrees)
+
+  degrees = np.array(degrees)
+  degree_val_dict["mean"] = np.mean(degrees)
+  degree_val_dict["std_dev"] = np.std(degrees)
+
+
+  return degree_val_dict
+
+
+
+
+
+
+  # then, compute values based on this value
+
+
+
+
+
+
 
 
 

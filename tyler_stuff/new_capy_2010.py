@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import os
 import csv
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity, standard_dev_of_pop
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity, standard_dev_of_pop, network_statistics
 
 
 
@@ -209,6 +209,13 @@ for city in additional_2010_filenames:
     # for standard deviations
     btemplist.append(standard_dev_of_pop(tot))
 
+    # network statistics
+    deg_dict = network_statistics(A)
+    btemplist.append(deg_dict["mean"])
+    btemplist.append(deg_dict["std_dev"])
+    btemplist.append(deg_dict["max"])
+    btemplist.append(deg_dict["min"])
+
 
 
     b_scores.append(btemplist)
@@ -377,6 +384,13 @@ for filename in os.listdir("2010_JSONS"):
     # for standard deviations
     btemplist.append(standard_dev_of_pop(tot))
 
+    # network statistics
+    deg_dict = network_statistics(A)
+    btemplist.append(deg_dict["mean"])
+    btemplist.append(deg_dict["std_dev"])
+    btemplist.append(deg_dict["max"])
+    btemplist.append(deg_dict["min"])
+
 
 
     b_scores.append(btemplist)
@@ -432,7 +446,7 @@ rank_matrix = []
 # sort by city names
 b_scores = sorted(b_scores)
 # appending the info that the other things have
-b_scores = [[], ["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank", "Population standard deviation"]] + b_scores
+b_scores = [[], ["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank", "Population standard deviation", "Degree average", "Degree standard deviation", "Max degree", "Min degree"]] + b_scores
 
 
 
@@ -448,8 +462,8 @@ for i in range(len(b_scores) - 2):
     now_row = b_scores[i + 2]
     rank = column(rank_matrix, i, k=0)
 
-    b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12]]
+    b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12], now_row[13], now_row[14], now_row[15], now_row[16]]
 
-with open('2010_for_3_29_2019_100_cities.csv', 'w') as csvfile:
+with open('2010_for_4_2_2019_degree_stats_cities.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)
