@@ -7,7 +7,7 @@ import csv
 import matplotlib.pyplot as plt
 import random
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge, standard_dev_of_pop, network_statistics
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, true_half_edge_infinity, morans_I, dissimilarity, gini, more_edge, more_half_edge, standard_dev_of_pop, network_statistics, weighted_single_brackets, weighted_half_edge, weighted_edge, true_edge_infinity, remove_dummy_tracts
 
 # this is what we range the scalar values of x and y (if you increase the range, the time for the tests to run goes up)
 test_range = range(1,3)
@@ -58,6 +58,71 @@ assert(int(standard_dev_of_pop(test_pop)) == 147)
 
 
 
+
+
+# for the dummy tract stuff
+
+def check_tract_assertions(results, my_A, my_list):
+  guess_A, guess_list = results
+  M = len(my_A)
+  for i in range(M):
+    for j in range(M):
+      assert(guess_A[i,j] == my_A[i,j])
+
+  assert(guess_list == my_list)
+
+# a(real) -- b(real, smaller) - c (dummy)
+A = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
+pop_vec = np.array([10, 5, 0])
+
+check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]]), [2])
+
+# a(bigger) -- b(dummy) - c (smaller)
+A = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
+pop_vec = np.array([10, 0, 5])
+
+check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]]), [1])
+
+
+
+# d is connected to a,b,c. d has zero pop, a has 100, b and c each have 60.
+A = np.array([[0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 1], [1, 1, 1, 0]])
+pop_vec = np.array([100, 60, 60, 0])
+
+
+check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1, 1], [1, 0, 0], [1, 0, 0]]), [3])
+
+# a - b - c - d, b and c are dummy, a has pop 100, d has pop 60
+
+A = np.array([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]])
+pop_vec = np.array([100, 0, 0, 60])
+
+check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]]), [1,2])
+
+# now, a is connected to all, but c and d are dummies, a has pop 1, b has pop 10
+
+A = np.array([[0, 1, 1, 1], [1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]])
+pop_vec = np.array([1, 10, 0, 0])
+
+check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]]), [2,3])
+
+# a - b - c - d, where b and d are dummy, and a has the bigger pop
+
+A = np.array([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]])
+pop_vec = np.array([91, 0, 35, 0])
+
+check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]]), [1,3])
+
+
+
+
+
+
+
+
+
+
+
 # 2D test cases
 # iterate through what the x and y values could be, and iterate through if the two regions are adjacent
 for x0 in test_range:
@@ -82,6 +147,17 @@ for x0 in test_range:
 
           # e is what the single brackets should be <x,y>
           e = x0 * y0 + x1 * y1 + c * (x0 * y1 + x1 * y0)
+          e_weighted_half = (1. / 2.) * (x0 * y0 + x1 * y1) + c * (x0 * y1 + x1 * y0)
+          e_weighted_third = (1. / 3.) * (x0 * y0 + x1 * y1) + c * (x0 * y1 + x1 * y0)
+          e_xx_third = (1. / 3.) * (x0 * x0 + x1 * x1) + c * (x0 * x1 + x1 * x0)
+          e_yy_third = (1. / 3.) * (y0 * y0 + y1 * y1) + c * (y0 * y1 + y1 * y0)
+
+          weighted_half_edge_third = (1./2.) * ((e_xx_third / (e_xx_third + e_weighted_third)) + (e_yy_third / (e_yy_third + e_weighted_third)))
+          weighted_edge_third = (1. / 2.) * ((e_xx_third / (e_xx_third + 2. * e_weighted_third)) + (e_yy_third / (e_yy_third + 2. * e_weighted_third)))
+
+
+
+
           e_x = x0 * x0 + x1 * x1 + c * (x0 * x1 + x1 * x0)
           e_y = y0 * y0 + y1 * y1 + c * (y0 * y1 + y1 * y0)
 
@@ -101,6 +177,15 @@ for x0 in test_range:
           true_x_denom = float(x0 * x0 + x0 * y0 + x1 * x1 + x1 * y1)
           true_y_denom = float(y0 * y0 + x0 * y0 + y1 * y1 + x1 * y1)
 
+          edge_inf_x_denom = float(x0 * x0 + 2. * x0 * y0 + x1 * x1 + 2. * x1 * y1)
+          edge_inf_y_denom = float(y0 * y0 + 2. * x0 * y0 + y1 * y1 + 2. * x1 * y1)
+
+
+
+
+
+
+
           # for testing moran's I
           n = 2.
           x_avg = float(x0 + x1) / n
@@ -115,12 +200,18 @@ for x0 in test_range:
 
 
           assert (single_brackets(x, y, A) == e)
+          assert (weighted_single_brackets(x, y, 0.5, A) == e_weighted_half)
+          #assert (weighted_single_brackets(x, y, (1./3.), A) == e_weighted_third)
+          np.testing.assert_approx_equal(weighted_single_brackets(x, y, (1./3.), A), e_weighted_third, significant=10)
+          np.testing.assert_approx_equal(weighted_half_edge(x, y, (1./3.), A), weighted_half_edge_third, significant=10)
+          np.testing.assert_approx_equal(weighted_edge(x, y, (1./3.), A), weighted_edge_third, significant=10)
           assert (skew(x, y, A) == skew_x)
           assert (edge(x, y, A) == (0.5) * (skew_x + skew_y))
           assert (skew_prime(x, y, A) == skew_prime_x)
           assert (half_edge(x, y, A) == (0.5) * (skew_prime_x + skew_prime_y))
           assert (half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / x_denom + y_square_sum / y_denom))
           assert (true_half_edge_infinity(x, y, A) == (0.5) * (x_square_sum / true_x_denom + y_square_sum / true_y_denom))
+          assert (true_edge_infinity(x, y, A) == (0.5) * (x_square_sum / edge_inf_x_denom + y_square_sum / edge_inf_y_denom))
           if (c > 0) and not (x_avg == x0):
             assert (morans_I(x, A) == moran_num / moran_denom)
           assert(dissimilarity(x, p) == dissim_sum / pop_denom)
@@ -158,6 +249,9 @@ for x0 in test_range:
                         total_pop = p0 + p1 + p2
                         total_x = x0 + x1 + x2
 
+
+
+
                         # this set of for-loops also goes through more_edge and more_half_edge, so we need these extra values
                         e_xy = float(x0 * y0 + x1 * y1 + x2 * y2 + adj_01 * (x0 * y1 + x1 * y0) + adj_02 * (x0 * y2 + x2 * y0) + adj_12 * (x1 * y2 + x2 * y1))
                         e_xz = float(x0 * z0 + x1 * z1 + x2 * z2 + adj_01 * (x0 * z1 + x1 * z0) + adj_02 * (x0 * z2 + x2 * z0) + adj_12 * (x1 * z2 + x2 * z1))
@@ -167,7 +261,8 @@ for x0 in test_range:
                         e_y = float(y0 * y0 + y1 * y1 + y2 * y2 + adj_01 * (y0 * y1 + y1 * y0) + adj_02 * (y0 * y2 + y2 * y0) + adj_12 * (y1 * y2 + y2 * y1))
                         e_z = float(z0 * z0 + z1 * z1 + z2 * z2 + adj_01 * (z0 * z1 + z1 * z0) + adj_02 * (z0 * z2 + z2 * z0) + adj_12 * (z1 * z2 + z2 * z1))
 
-
+                        # for the weighted version
+                        e_xy_weighted_half = float((0.5) * (x0 * y0 + x1 * y1 + x2 * y2 )+ adj_01 * (x0 * y1 + x1 * y0) + adj_02 * (x0 * y2 + x2 * y0) + adj_12 * (x1 * y2 + x2 * y1))
 
 
                         skew_x = (float(e_x) / (e_x + 2 * e_xy))
@@ -202,6 +297,7 @@ for x0 in test_range:
                         gini_sum = 2. * float(abs(x0 * p1 - p0 * x1) +  abs(x0 * p2 - p0 * x2) + abs(x1 * p2 - p1 * x2))
 
                         assert (single_brackets(x, y, A) == e_xy)
+                        assert (weighted_single_brackets(x, y, 0.5, A) == e_xy_weighted_half)
                         assert (skew(x, y, A) == skew_x)
                         assert (edge(x, y, A) == (0.5) * (skew_x + skew_y))
                         assert (more_edge([x, y], A) == (0.5) * (skew_x + skew_y))

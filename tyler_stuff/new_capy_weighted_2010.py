@@ -1,5 +1,4 @@
-# for downloading city values from 2000
-# Tyler Piazza 1/24/19
+# for testing the various weighted half edge (and maybe edge) scores...
 import numpy as np
 import networkx as nx
 import json
@@ -8,7 +7,7 @@ import matplotlib.pyplot as plt
 import os
 import csv
 
-from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity, standard_dev_of_pop, network_statistics, remove_dummy_tracts
+from capy import single_brackets, skew, edge, skew_prime, half_edge, half_edge_infinity, morans_I, dissimilarity, gini, true_half_edge_infinity, standard_dev_of_pop, network_statistics, weighted_half_edge, weighted_edge, true_edge_infinity
 
 
 
@@ -25,7 +24,7 @@ names_of_files_for_pop_histogram = ['Flint_MI', 'Miami-Fort-Lauderdale-West-Palm
 pop_dict = {}
 
 
-
+print "this is the file that does the weighted functions, so beware"
 
 CSA_code_dict = {}
 
@@ -80,23 +79,37 @@ for city in additional_2010_filenames:
     num_vtds = g.number_of_nodes()
 
     # get demographic and total population vectors
-    old_white = np.zeros((num_vtds,1))
-    old_black = np.zeros((num_vtds,1))
-    old_asian = np.zeros((num_vtds,1))
-    old_hisp = np.zeros((num_vtds,1))
-    old_amein = np.zeros((num_vtds,1))
-    old_natpac = np.zeros((num_vtds,1))
-    old_other = np.zeros((num_vtds,1))
-    old_tot = np.zeros((num_vtds,1))
-    old_nb = np.zeros((num_vtds,1))
-    old_nh = np.zeros((num_vtds,1))
-    old_na = np.zeros((num_vtds,1))
-    # the score that we will be using
-    old_poc = np.zeros((num_vtds,1))
+    white = np.zeros((num_vtds,1))
+    black = np.zeros((num_vtds,1))
+    asian = np.zeros((num_vtds,1))
+    hisp = np.zeros((num_vtds,1))
+
+    """
+    hisp_w = np.zeros((num_vtds,1))
+    hisp_b = np.zeros((num_vtds,1))
+    hisp_a = np.zeros((num_vtds,1))
+    hisp_n = np.zeros((num_vtds,1))
+    hisp_o = np.zeros((num_vtds,1))
+    """
+
+
+
+
+
+
+
+    amein = np.zeros((num_vtds,1))
+    natpac = np.zeros((num_vtds,1))
+    other = np.zeros((num_vtds,1))
+    tot = np.zeros((num_vtds,1))
+    nb = np.zeros((num_vtds,1))
+    nh = np.zeros((num_vtds,1))
+    na = np.zeros((num_vtds,1))
+    poc = np.zeros((num_vtds,1))
 
     #here we add the demographics we want to compute the scores for. Currently we compute the scores for white - demographic and for demographic and its complementary set.
-    dems = [old_black, old_asian, old_hisp]
-    comps = [old_nb, old_na, old_nh]
+    dems = [black, asian, hisp]
+    comps = [nb, na, nh]
 
     # for 2010, for the newer cities
     """
@@ -125,12 +138,12 @@ for city in additional_2010_filenames:
     # assign demographic population per geographic unit
     for i in range(n_tracts):
         # I assume that each category is discrete (there are no people in multiple categories)
-        old_white[i] = g.nodes[i]['nhgis00016']
-        old_black[i] = g.nodes[i]['nhgis00017']
-        old_asian[i] = g.nodes[i]['nhgis00019']
+        white[i] = g.nodes[i]['nhgis00016']
+        black[i] = g.nodes[i]['nhgis00017']
+        asian[i] = g.nodes[i]['nhgis00019']
 
         # add up the different variants of hispanic
-        old_hisp[i] =  float(g.nodes[i]['nhgis00023'])
+        hisp[i] =  float(g.nodes[i]['nhgis00023'])
         """
         hisp_w[i] = g.nodes[i]['H_WHITE']
         hisp_b[i] = g.nodes[i]['H_BLACK']
@@ -139,15 +152,15 @@ for city in additional_2010_filenames:
         hisp_o[i] = g.nodes[i]['H_OTH']
         """
 
-        old_natpac[i] = g.nodes[i]['nhgis00020']
-        old_other[i] = float(g.nodes[i]['nhgis00018']) +  float(g.nodes[i]['nhgis00021']) + float(g.nodes[i]['nhgis00022'])
+        natpac[i] = g.nodes[i]['nhgis00020']
+        other[i] = float(g.nodes[i]['nhgis00018']) +  float(g.nodes[i]['nhgis00021']) + float(g.nodes[i]['nhgis00022'])
         # need to modify
-        old_tot[i] = old_white[i] + old_black[i] + old_asian[i] + old_hisp[i] + old_natpac[i] + old_other[i]
-        old_nb[i] = old_tot[i] - old_black[i]
-        old_nh[i] = old_tot[i] - old_hisp[i]
-        old_na[i] = old_tot[i] - old_asian[i]
+        tot[i] = white[i] + black[i] + asian[i] + hisp[i] + natpac[i] + other[i]
+        nb[i] = tot[i] - black[i]
+        nh[i] = tot[i] - hisp[i]
+        na[i] = tot[i] - asian[i]
 
-        old_poc[i] = old_tot[i] - old_white[i]
+        poc[i] = tot[i] - white[i]
 
 
 
@@ -155,9 +168,9 @@ for city in additional_2010_filenames:
     #pop_dict[city] = tot
     #print "ending here"
     # maybe I can use these vectors, sum them up, etc.
-    total_white = old_white.sum()
-    total_black = old_black.sum()
-    total_pop = old_tot.sum()
+    total_white = white.sum()
+    total_black = black.sum()
+    total_pop = tot.sum()
 
     """
     print "white pop is " + str(total_white)
@@ -185,60 +198,6 @@ for city in additional_2010_filenames:
     A = nx.to_numpy_matrix(g)
 
 
-    # rehandle the matrices...
-    A_new, dummy_list = remove_dummy_tracts(A, old_tot)
-    A = A_new
-
-    new_n_tracts = n_tracts - len(dummy_list)
-
-    white = np.zeros((new_n_tracts,1))
-    black = np.zeros((new_n_tracts,1))
-    asian = np.zeros((new_n_tracts,1))
-    hisp = np.zeros((new_n_tracts,1))
-    amein = np.zeros((new_n_tracts,1))
-    natpac = np.zeros((new_n_tracts,1))
-    other = np.zeros((new_n_tracts,1))
-    tot = np.zeros((new_n_tracts,1))
-    nb = np.zeros((new_n_tracts,1))
-    nh = np.zeros((new_n_tracts,1))
-    na = np.zeros((new_n_tracts,1))
-    # the score that we will be using
-    poc = np.zeros((new_n_tracts,1))
-
-
-
-
-
-    new_placement = 0
-
-    for i in range(n_tracts):
-        if not i in dummy_list:
-            # have to create these new vectors...
-            white[new_placement] = old_white[i]
-            black[new_placement] = old_black[i]
-            asian[new_placement] = old_asian[i]
-
-            # add up the different variants of hispanic
-            hisp[new_placement] = old_hisp[i]
-            natpac[new_placement] = old_natpac[i]
-            other[new_placement] = old_other[i]
-            # need to modify
-            tot[new_placement] = old_tot[i]
-            nb[new_placement] = old_nb[i]
-            nh[new_placement] = old_nh[i]
-            na[new_placement] = old_na[i]
-            poc[new_placement] = old_poc[i]
-
-            new_placement += 1
-
-
-    n_tracts = new_n_tracts
-    # done rehandling adjacency, dummy tracts, etc.
-
-
-
-
-
     #compute and store the energy scores in a csv
     btemplist = []
     # info, like name, population, black rho, and white rho (percentage of that pop in the city)
@@ -252,12 +211,24 @@ for city in additional_2010_filenames:
     btemplist.append(edge(poc, white, A))
     btemplist.append(half_edge(poc, white, A))
     # note: this is the real half edge infinity
-    btemplist.append(true_half_edge_infinity(poc, white, A))
-    # note - this is the TYPO half edge infinity
-    btemplist.append(half_edge_infinity(poc, white, A))
-    btemplist.append((dissimilarity(poc, tot)[0]))
-    btemplist.append((gini(poc, tot)[0]))
-    btemplist.append(morans_I(poc, A))
+
+
+    btemplist.append(true_edge_infinity(poc, white, A))
+
+    # the new weighted versions
+    btemplist.append(weighted_edge(poc, white, 0., A))
+    btemplist.append(weighted_edge(poc, white, 0.5, A))
+    btemplist.append(weighted_edge(poc, white, 2.0, A))
+    btemplist.append(weighted_edge(poc, white, 10.0, A))
+
+
+
+
+
+    #btemplist.append(half_edge_infinity(poc, white, A))
+    #btemplist.append((dissimilarity(poc, tot)[0]))
+    #btemplist.append((gini(poc, tot)[0]))
+    #btemplist.append(morans_I(poc, A))
     # for standard deviations
     btemplist.append(standard_dev_of_pop(tot))
 
@@ -331,23 +302,37 @@ for filename in os.listdir("2010_JSONS"):
     num_vtds = g.number_of_nodes()
 
     # get demographic and total population vectors
-    old_white = np.zeros((num_vtds,1))
-    old_black = np.zeros((num_vtds,1))
-    old_asian = np.zeros((num_vtds,1))
-    old_hisp = np.zeros((num_vtds,1))
-    old_amein = np.zeros((num_vtds,1))
-    old_natpac = np.zeros((num_vtds,1))
-    old_other = np.zeros((num_vtds,1))
-    old_tot = np.zeros((num_vtds,1))
-    old_nb = np.zeros((num_vtds,1))
-    old_nh = np.zeros((num_vtds,1))
-    old_na = np.zeros((num_vtds,1))
-    # the score that we will be using
-    old_poc = np.zeros((num_vtds,1))
+    white = np.zeros((num_vtds,1))
+    black = np.zeros((num_vtds,1))
+    asian = np.zeros((num_vtds,1))
+    hisp = np.zeros((num_vtds,1))
+
+    """
+    hisp_w = np.zeros((num_vtds,1))
+    hisp_b = np.zeros((num_vtds,1))
+    hisp_a = np.zeros((num_vtds,1))
+    hisp_n = np.zeros((num_vtds,1))
+    hisp_o = np.zeros((num_vtds,1))
+    """
+
+
+
+
+
+
+
+    amein = np.zeros((num_vtds,1))
+    natpac = np.zeros((num_vtds,1))
+    other = np.zeros((num_vtds,1))
+    tot = np.zeros((num_vtds,1))
+    nb = np.zeros((num_vtds,1))
+    nh = np.zeros((num_vtds,1))
+    na = np.zeros((num_vtds,1))
+    poc = np.zeros((num_vtds,1))
 
     #here we add the demographics we want to compute the scores for. Currently we compute the scores for white - demographic and for demographic and its complementary set.
-    dems = [old_black, old_asian, old_hisp]
-    comps = [old_nb, old_na, old_nh]
+    dems = [black, asian, hisp]
+    comps = [nb, na, nh]
 
     # for 2000, from the codebook (and then the second code is what is in the shapefiles)
     # I am ignoging 007 and 014 for now
@@ -371,12 +356,12 @@ for filename in os.listdir("2010_JSONS"):
     # assign demographic population per geographic unit
     for i in range(g.number_of_nodes()):
         # I assume that each category is discrete (there are no people in multiple categories)
-        old_white[i] = g.nodes[i]['NH_WHITE']
-        old_black[i] = g.nodes[i]['NH_BLACK']
-        old_asian[i] = g.nodes[i]['NH_ASIAN']
+        white[i] = g.nodes[i]['NH_WHITE']
+        black[i] = g.nodes[i]['NH_BLACK']
+        asian[i] = g.nodes[i]['NH_ASIAN']
 
         # add up the different variants of hispanic
-        old_hisp[i] =  float(g.nodes[i]['H_WHITE']) + float(g.nodes[i]['H_BLACK']) + float(g.nodes[i]['H_ASIAN']) + float(g.nodes[i]['H_NAHI']) + float(g.nodes[i]['H_OTH'])
+        hisp[i] =  float(g.nodes[i]['H_WHITE']) + float(g.nodes[i]['H_BLACK']) + float(g.nodes[i]['H_ASIAN']) + float(g.nodes[i]['H_NAHI']) + float(g.nodes[i]['H_OTH'])
         """
         hisp_w[i] = g.nodes[i]['H_WHITE']
         hisp_b[i] = g.nodes[i]['H_BLACK']
@@ -385,22 +370,22 @@ for filename in os.listdir("2010_JSONS"):
         hisp_o[i] = g.nodes[i]['H_OTH']
         """
 
-        old_natpac[i] = g.nodes[i]['NH_NAHI']
-        old_other[i] = g.nodes[i]['NH_OTH']
+        natpac[i] = g.nodes[i]['NH_NAHI']
+        other[i] = g.nodes[i]['NH_OTH']
         # need to modify
-        old_tot[i] = old_white[i] + old_black[i] + old_asian[i] + old_hisp[i] + old_natpac[i] + old_other[i]
-        old_nb[i] = old_tot[i] - old_black[i]
-        old_nh[i] = old_tot[i] - old_hisp[i]
-        old_na[i] = old_tot[i] - old_asian[i]
+        tot[i] = white[i] + black[i] + asian[i] + hisp[i] + natpac[i] + other[i]
+        nb[i] = tot[i] - black[i]
+        nh[i] = tot[i] - hisp[i]
+        na[i] = tot[i] - asian[i]
 
-        old_poc[i] = old_tot[i] - old_white[i]
+        poc[i] = tot[i] - white[i]
 
 
 
     # maybe I can use these vectors, sum them up, etc.
-    total_white = old_white.sum()
-    total_black = old_black.sum()
-    total_pop = old_tot.sum()
+    total_white = white.sum()
+    total_black = black.sum()
+    total_pop = tot.sum()
 
     """
     print "white pop is " + str(total_white)
@@ -428,57 +413,6 @@ for filename in os.listdir("2010_JSONS"):
     A = nx.to_numpy_matrix(g)
 
 
-    # rehandle the matrices...
-    A_new, dummy_list = remove_dummy_tracts(A, old_tot)
-    A = A_new
-
-    new_n_tracts = n_tracts - len(dummy_list)
-
-    white = np.zeros((new_n_tracts,1))
-    black = np.zeros((new_n_tracts,1))
-    asian = np.zeros((new_n_tracts,1))
-    hisp = np.zeros((new_n_tracts,1))
-    amein = np.zeros((new_n_tracts,1))
-    natpac = np.zeros((new_n_tracts,1))
-    other = np.zeros((new_n_tracts,1))
-    tot = np.zeros((new_n_tracts,1))
-    nb = np.zeros((new_n_tracts,1))
-    nh = np.zeros((new_n_tracts,1))
-    na = np.zeros((new_n_tracts,1))
-    # the score that we will be using
-    poc = np.zeros((new_n_tracts,1))
-
-
-
-
-
-    new_placement = 0
-
-    for i in range(n_tracts):
-        if not i in dummy_list:
-            # have to create these new vectors...
-            white[new_placement] = old_white[i]
-            black[new_placement] = old_black[i]
-            asian[new_placement] = old_asian[i]
-
-            # add up the different variants of hispanic
-            hisp[new_placement] = old_hisp[i]
-            natpac[new_placement] = old_natpac[i]
-            other[new_placement] = old_other[i]
-            # need to modify
-            tot[new_placement] = old_tot[i]
-            nb[new_placement] = old_nb[i]
-            nh[new_placement] = old_nh[i]
-            na[new_placement] = old_na[i]
-            poc[new_placement] = old_poc[i]
-
-            new_placement += 1
-
-
-    n_tracts = new_n_tracts
-    # done rehandling adjacency, dummy tracts, etc.
-
-
     #compute and store the energy scores in a csv
     btemplist = []
     # info, like name, population, black rho, and white rho (percentage of that pop in the city)
@@ -493,12 +427,22 @@ for filename in os.listdir("2010_JSONS"):
     btemplist.append(edge(poc, white, A))
     btemplist.append(half_edge(poc, white, A))
     # note: this is the real half edge infinity
-    btemplist.append(true_half_edge_infinity(poc, white, A))
+    btemplist.append(true_edge_infinity(poc, white, A))
     # note - this is the TYPO half edge infinity
-    btemplist.append(half_edge_infinity(poc, white, A))
-    btemplist.append((dissimilarity(poc, tot)[0]))
-    btemplist.append((gini(poc, tot)[0]))
-    btemplist.append(morans_I(poc, A))
+    # the new weighted versions
+    btemplist.append(weighted_edge(poc, white, 0., A))
+    btemplist.append(weighted_edge(poc, white, 0.5, A))
+    btemplist.append(weighted_edge(poc, white, 2.0, A))
+    btemplist.append(weighted_edge(poc, white, 10.0, A))
+
+
+
+
+
+    #btemplist.append(half_edge_infinity(poc, white, A))
+    #btemplist.append((dissimilarity(poc, tot)[0]))
+    #btemplist.append((gini(poc, tot)[0]))
+    #btemplist.append(morans_I(poc, A))
     # for standard deviations
     btemplist.append(standard_dev_of_pop(tot))
 
@@ -564,7 +508,7 @@ rank_matrix = []
 # sort by city names
 b_scores = sorted(b_scores)
 # appending the info that the other things have
-b_scores = [[], ["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank", "Population standard deviation", "Degree average", "Degree standard deviation", "Max degree", "Min degree"]] + b_scores
+b_scores = [[], ["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "Edge Infinity", "Edge Infinity rank", "Edge 0.", "Edge 0. rank", "Edge 0.5", "Edge 0.5 rank",  "Edge 2", "Edge 2 rank", "Edge 10", "Edge 10 rank", "Population standard deviation", "Degree average", "Degree standard deviation", "Max degree", "Min degree"]] + b_scores
 
 
 
@@ -583,19 +527,9 @@ for i in range(len(b_scores) - 2):
     b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12], now_row[13], now_row[14], now_row[15], now_row[16]]
 
 
-with open('2010_for_4_23_2019_no_dummies.csv', 'w') as csvfile:
+with open('weighted_EDGE_2010_for_4_17_19.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
     writer.writerows(b_scores)
-
-
-
-
-
-
-
-
-
-
 
 
 
