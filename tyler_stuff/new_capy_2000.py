@@ -20,21 +20,14 @@ cities_from_1990_names = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomingto
 cities_1990_need_manual = ['Boulder_CO', 'Duluth_MN-WI', 'Huntingdon_PA', 'Jacksonville_FL', 'San-Diego-Carlsbad_CA', 'Tampa-St-Petersburg-Clearwater_FL', 'Virginia-Beach-Norfolk-Newport-News_VA-NC']
 
 
-
-
-
-
 city_names = saved_cities + problem_cities_save_names + cities_from_1990_names + cities_1990_need_manual
 city_names = sorted(city_names)
-
 
 b_scores = [[]]
 h_scores = [[]]
 a_scores = [[]]
 
-
 b_scores.append(["City", "Number of Tracts", "Total polulation", "Percent Black", "Percent White", "Edge" , "Edge rank",  "HEdge", "HEdge rank", "HEdgeInfinity (True)", "HEdgeInfinity (True) rank", "Typo HEI", "Typo HEI rank", "Dissimilarity", "Dissimilarity rank",  "Gini", "Gini rank", "Moran's I", "Moran's I rank", "Population standard deviation", "Degree average", "Degree standard deviation", "Max degree", "Min degree"])
-
 
 bEdge = []
 bHEdge = []
@@ -43,16 +36,13 @@ bFrey = []
 bAssort = []
 bMoran = []
 
-
-#we compute scores
+#we compute scores here
 for city in city_names:
     print (city)
     with open('json2000/'+city+'_data.json') as f:
         data = json.load(f)
-    #g = nx.adjacency_graph(data)
     g = nx.readwrite.json_graph.adjacency_graph(data)
     g = nx.convert_node_labels_to_integers(g)
-
     num_vtds = g.number_of_nodes()
 
     # get demographic and total population vectors
@@ -120,9 +110,6 @@ for city in city_names:
 
         old_poc[i] = old_tot[i] - old_white[i]
 
-
-
-    # maybe I can use these vectors, sum them up, etc.
     total_white = old_white.sum()
     total_black = old_black.sum()
     total_pop = old_tot.sum()
@@ -155,10 +142,6 @@ for city in city_names:
     # the score that we will be using
     poc = np.zeros((new_n_tracts,1))
 
-
-
-
-
     new_placement = 0
 
     for i in range(n_tracts):
@@ -181,20 +164,8 @@ for city in city_names:
 
             new_placement += 1
 
-
     n_tracts = new_n_tracts
     # done rehandling adjacency, dummy tracts, etc.
-
-
-
-
-
-
-
-
-
-
-
     #compute and store the energy scores in a csv
     btemplist = []
     # info, like name, population, black rho, and white rho (percentage of that pop in the city)
@@ -223,9 +194,6 @@ for city in city_names:
     btemplist.append(deg_dict["std_dev"])
     btemplist.append(deg_dict["max"])
     btemplist.append(deg_dict["min"])
-
-
-
     b_scores.append(btemplist)
 
 def column(matrix, i, k=0):

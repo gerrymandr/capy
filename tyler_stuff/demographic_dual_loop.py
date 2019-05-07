@@ -4,7 +4,6 @@ Tyler Piazza
 adapting Emilia's code
 
 """
-
 import os
 
 import networkx as nx
@@ -30,18 +29,10 @@ geometry_problem = ['Albuquerque NM','Baltimore-Columbia-Towson MD','Baton Rouge
 geometry_problem_1_subset = ['Albuquerque NM','Baltimore-Columbia-Towson MD','Baton Rouge LA']
 
 #cities = ['Albany-Schenectady-Troy', 'Ann Arbor MI', 'Athens-Clark County GA', 'Austin-Round Rock TX', 'Bloomington IN', 'Boston-Cambridge-Newton MA', 'Boulder CO', 'Bridgeport-Stamford-Norwalk CT', 'Burlington-South Burlington VT', 'Cedar Rapids IA', 'Chicago-Naperville-Elgin IL-IN-WI', 'Colorado Springs CO', 'Des Moines-West Des Moines IA', 'Duluth MN-WI', 'El Paso TX', 'Flint MI',  'Grand Rapids-Wyoming MI',  'Harrisburg-Carlisle PA', 'Huntingdon PA',  'Iowa city IA', 'Ithaca NY', 'Jacksonville FL', 'Junction City KS', 'Kansas city MO-KS', 'Lafayette-West Lafayette IN', 'Lancaster PA', 'Las Vegas-Henderson-Paradise NV', 'Lincoln NE','Madison WI',  'Los Angeles-Long Beach-Anaheim CA',  'McAllen-Edingburg-Mission TX','Miami-Fort Lauderdale-West Palm Beach FL','New Haven-Milford CT', 'New Orleans-Metairie LA', 'New York-Newark-Jersey City NY-NJ-PA',  'Oklahoma City-OK','Orlando-Kissimmee-Sanford FL', 'Philadelphia-Camden-Wilmington PA-NJ-DE-MD', 'Phoenix-Mesa-Scottsdale AZ', 'Pittsburgh PA', 'Plattsburgh NY', 'Providence-Warwick RI-MA', 'Reno NV', 'Rio Grande City TX', 'Riverside-San Bernadino-Ontario CA', 'Rochester NY',  'Salt Lake City UT', 'San Antonio-New Braunfels TX', 'San Diego-Carlsbad CA', 'Santa Cruz-Watsonville CA', 'Santa Fe NM', 'Savannah GA','Syracuse NY', 'Tallahassee FL', 'Tampa-St Petersburg-Clearwater FL', 'Toledo OH', 'Tucson AZ', 'Tuscaloosa AL','Virginia Beach-Norfolk-Newport News VA-NC', 'Youngstown-Warren-Boardman OH-PA']
-
-
-
 # commented cities below are cities that I removed because they had weird errors
 #'Athens-Clarke-County_GA'
 #'Burlington-South-Burlington_VT'#
 additional_2010_filenames = ['Ann-Arbor_MI', 'Athens-Clarke-County_GA', 'Bloomington_IN', 'Boulder_CO', 'Bridgeport-Stamford-Norwalk_CT', 'Buffalo-Cheektowaga-Niagara-Falls_NY','Burlington-South-Burlington_VT', 'Cedar-Rapids_IA', 'Colorado-Springs_CO','Duluth,MN-WI', 'El-Paso_TX', 'Flint_MI', 'Huntingdon_PA', 'Iowa-City_IA', 'Ithaca_NY', 'Jacksonville,FL', 'Junction-City_KS', 'Kingsport-Bristol-Bristol_TN-VA', 'Lancaster_PA', 'Lincoln_NE', 'McAllen-Edinburg-Mission_TX', 'Miami-Fort-Lauderdale-West-Palm-Beach_FL', 'New-Haven-Milford_CT', 'Phoenix-Mesa-Scottsdale_AZ', 'Plattsburgh_NY', 'Providence-Warwick_RI-MA', 'Reno_NV', 'Rio-Grande-City_TX', 'San-Antonio-New-Braunfels_TX', 'San-Diego-Carlsbad_CA', 'Santa-Cruz-Watsonville_CA', 'Santa-Fe_NM', 'Savannah_GA', 'Tallahassee_FL', 'Tampa-St-Petersburg-Clearwater,FL', 'Tucson_AZ', 'Tuscaloosa_AL', 'Virginia-Beach-Norfolk-Newport-News,VA-NC']
-
-
-
-
-
 
 
 
@@ -86,13 +77,16 @@ total_new_for_2000 = cities_from_1990_names + cities_1990_need_manual
 
 #total_old_for_2000 = saved_cities + problem_cities_save_names
 
+chicago_MAUP_cities = ["Chicago_metro_blckgrps", "Chicago_metro_tracts"]
 
+
+chicago_MAUP_cities_intersected = ["Chicago_metro_blckgrps_intersection", "Chicago_metro_tracts_intersection"]
 
 #input your shape file
-for city in ['Athens-Clarke-County_GA']:
+for city in chicago_MAUP_cities_intersected:
 
     # be sure to change the folder as needed
-    county_shp = "shapefiles_2010_more/"+city+".shp"
+    county_shp = "MAUP/Shapefiles/"+city+".shp"
     print "I want to open the shapefile called " + county_shp
     df_counties = gpd.read_file(county_shp)
     df_counties.plot()
@@ -175,6 +169,7 @@ for city in ['Athens-Clarke-County_GA']:
 
 
 
+    # uncomment the line below depending on 1990, 2000, 2010
 
 
     # note: the id_col part may need to be removed for the cities that had to be extracted manually
@@ -187,12 +182,11 @@ for city in ['Athens-Clarke-County_GA']:
     # this line if you want 2000
     #graph = make_graph.construct_graph(county_shp, id_col="fid",  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026', 'nhgis00027'],data_source_type="fiona")
 
-    graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026', 'nhgis00027', 'nhgis00028', 'nhgis00029', 'nhgis00030'],data_source_type="fiona")
+    #graph = make_graph.construct_graph(county_shp,  data_cols=['nhgis00014','nhgis00015','nhgis00016', 'nhgis00017','nhgis00018', 'nhgis00019', 'nhgis00020', 'nhgis00021', 'nhgis00022', 'nhgis00023', 'nhgis00024', 'nhgis00025', 'nhgis00026', 'nhgis00027', 'nhgis00028', 'nhgis00029', 'nhgis00030'],data_source_type="fiona")
 
+    # this line is for the chicago MAUP codes
+    graph = make_graph.construct_graph(county_shp,  data_cols=['TOTPOP','POP_HISP','POP_NOTHIS', 'POP_WHITE','POP_BLACK', 'POP_AMIN', 'POP_ASIAN', 'POP_NHPI', 'POP_OTHER', 'POP_2MORE'],data_source_type="fiona")
     nx.draw(graph)
-
-
-
 
     # this handles an annoying error where "True" is not serializable but "true" is
     for node in graph.nodes:
@@ -200,19 +194,9 @@ for city in ['Athens-Clarke-County_GA']:
             graph.nodes[node]['boundary_node'] = 'true'
         elif str(graph.nodes[node]['boundary_node']) == "False":
             graph.nodes[node]['boundary_node'] = 'false'
-
-
-    #plt.show()
     #we're saving the demographic dual graph as a json, to compute the energies from.
 
     data = nx.readwrite.json_graph.adjacency_data(graph)
-    #print data
-
     print "about to write into file..."
-    with open("json2010new/"+city+"_data.json", "w") as f:
+    with open("MAUP/jsonsMAUP/"+city+"_data.json", "w") as f:
         json.dump(data, f)
-
-
-
-
-

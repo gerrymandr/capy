@@ -1,5 +1,5 @@
 # to compute various demographic scores
-# note: right now, they are made for 2 demographics. Eventually, they will be generalized
+# Tyler, 5/6/19
 
 import numpy as np
 import networkx as nx
@@ -11,7 +11,6 @@ from sets import Set
 # <x,y> =  x^T(A+I)y = sum_i x_iy_i + sum_{i \sim j}x_iy_i + x_jy_i
 def single_brackets(x, y, A):
     return np.matmul(x.T, np.matmul((A + np.identity(A[0].size)), y))
-
 
 # THE WEIGHTED VERSION
 # <x,y>_lambda = lambda(sum_i x_iy_i) + sum_{i \sim j}x_iy_i + x_jy_i
@@ -26,10 +25,8 @@ def skew(x, y, A):
   x_prod = single_brackets(x, x, A)
   return float(x_prod) / float(x_prod + 2 * single_brackets(x, y, A))
 
-
 def edge(x, y, A):
-  # JUST defined for 2 for now
-
+  # JUST defined for 2 for now. See more_edge for more than 2
   skew_sum = 0
   for (a,b) in [(x,y), (y, x)]:
     skew_sum += skew(a, b, A)
@@ -97,9 +94,6 @@ def true_edge_infinity(x, y, A):
   result = (term1 + term2) / 2.
   return result
 
-
-
-
 #<x,x> / (<x,x> + <x,y>)
 def skew_prime(x, y, A):
   x_prod = single_brackets(x, x, A)
@@ -138,8 +132,6 @@ def more_half_edge(dem_list, A):
   skew_p_sum /= float(n)
   return skew_p_sum
 
-
-
 # the weighted version of half edge TBD
 def weighted_half_edge(x, y, lam, A):
   wsb_xx = float(weighted_single_brackets(x,x,lam,A))
@@ -151,14 +143,12 @@ def weighted_half_edge(x, y, lam, A):
   return holder
 
 
-
-
-
 """ NOTE: this is referred to as "typo" in our literature. It is the incorrect
 formula for what is half edge. However, this "typo" ends up explaining the difference
 between edge and half edge
 """
 def half_edge_infinity(x, y, A):
+  # see note above about how this is NOT the true value of half edge infinity
   x_square_sum = 0
   y_square_sum = 0
   first_denom = 0
@@ -203,9 +193,6 @@ def true_half_edge_infinity(x, y, A):
   result = (term1 + term2) / 2.
   return result
 
-
-
-
 # just runs over pairs i,j such that i<j, and sums the matrix, then multiplies by 2
 def smart_symmetric_matrix_sum(A):
   n = len(A)
@@ -215,9 +202,6 @@ def smart_symmetric_matrix_sum(A):
       accumulator += A[i,j]
 
   return float(2 * accumulator)
-
-
-
 
 # moran's I
 # n/(|E|) * (v^TAv)/(v^Tv)
@@ -240,8 +224,6 @@ def dissimilarity(x, total_pop_vector):
   n = len(x)
   first_term = 1. / float(2 * x_pop * (total_pop - x_pop))
   accumulator = 0.
-
-
   for i in range(n):
     accumulator += abs(x[i] * total_pop - total_pop_vector[i] * x_pop)
   return first_term * accumulator
@@ -251,22 +233,17 @@ def gini(x, total_pop_vector):
   total_pop = np.sum(total_pop_vector)
   x_pop = np.sum(x)
   n = len(x)
-
   first_term = 1. / float(2 * x_pop * (total_pop - x_pop))
   accumulator = 0.
-
   for i in range(n):
     for j in range(i + 1, n):
       accumulator += abs(x[i] * total_pop_vector[j] - total_pop_vector[i] * x[j])
-
   # the factor of 2 is necessary because we technically sum over all n^2 pairs (i,j), but I only did distinct pairs, and we ignore i=j
   return first_term * accumulator * 2
 
 # compute evenness of population across tracts/units
 def standard_dev_of_pop(total_pop_vector):
   return np.std(total_pop_vector)
-
-
 
 def network_statistics(A):
   # first, get a vector that is the sum of the rows of A
@@ -277,9 +254,6 @@ def network_statistics(A):
     for j in range(n):
       degree_counter += A[i,j]
     degrees.append(degree_counter)
-
-
-
   degree_val_dict = {}
   degree_val_dict["max"] = max(degrees)
   degree_val_dict["min"] = min(degrees)
@@ -292,19 +266,11 @@ def network_statistics(A):
   return degree_val_dict
 
 
-
-
-
-
-  # then, compute values based on this value
-
-
 """ this function is meant to handle the "dummy tract" problem, where shapefiles
 have tracts with zero population
 Our solution is to remove them from the adjacency matrix, but effectively "merge"
 them into the nearest tract with the largest population
 """
-
 
 # I assume that dummy tracts are either completely isolated, or adjacent to a non-dummy tract
 def remove_dummy_tracts(A, pop_vec):
@@ -336,7 +302,6 @@ def remove_dummy_tracts(A, pop_vec):
           A[best_tract, j] = 1
           A[j, best_tract] = 1
 
-
   # then, we must go through and create a new numpy matrix
   new_N = N - len(dummy_set)
   new_A = np.array([[0. for b in range(new_N)] for a in range(new_N)])
@@ -349,43 +314,9 @@ def remove_dummy_tracts(A, pop_vec):
         if j not in dummy_set:
           # creating the new adjacency matrix
           new_A[i_placement, j_placement] = A[i, j]
-
           j_placement += 1
       i_placement += 1
 
   # return the new adjacency matrix, as well as the set of dummy vertices, so you can remove them from your other vectors
   print "throwing out " + str(len(dummy_set)) + " dummy nodes"
   return new_A, list(dummy_set)
-
-
-
-
-
-
-
-  # first off, get a set of tracts with a zero population
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

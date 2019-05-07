@@ -49,15 +49,9 @@ assert(deg_dict_2["max"] == 2)
 assert(deg_dict_2["min"] == 1)
 
 
-
-
-
 # for standard deviation
 test_pop = np.array([600., 470., 170., 430. , 300.])
 assert(int(standard_dev_of_pop(test_pop)) == 147)
-
-
-
 
 
 # for the dummy tract stuff
@@ -82,7 +76,6 @@ A = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
 pop_vec = np.array([10, 0, 5])
 
 check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]]), [1])
-
 
 
 # d is connected to a,b,c. d has zero pop, a has 100, b and c each have 60.
@@ -116,13 +109,6 @@ check_tract_assertions(remove_dummy_tracts(A, pop_vec), np.array([[0, 1], [1, 0]
 
 
 
-
-
-
-
-
-
-
 # 2D test cases
 # iterate through what the x and y values could be, and iterate through if the two regions are adjacent
 for x0 in test_range:
@@ -144,7 +130,6 @@ for x0 in test_range:
           total_pop = p0 + p1
           total_x = x0 + x1
 
-
           # e is what the single brackets should be <x,y>
           e = x0 * y0 + x1 * y1 + c * (x0 * y1 + x1 * y0)
           e_weighted_half = (1. / 2.) * (x0 * y0 + x1 * y1) + c * (x0 * y1 + x1 * y0)
@@ -154,9 +139,6 @@ for x0 in test_range:
 
           weighted_half_edge_third = (1./2.) * ((e_xx_third / (e_xx_third + e_weighted_third)) + (e_yy_third / (e_yy_third + e_weighted_third)))
           weighted_edge_third = (1. / 2.) * ((e_xx_third / (e_xx_third + 2. * e_weighted_third)) + (e_yy_third / (e_yy_third + 2. * e_weighted_third)))
-
-
-
 
           e_x = x0 * x0 + x1 * x1 + c * (x0 * x1 + x1 * x0)
           e_y = y0 * y0 + y1 * y1 + c * (y0 * y1 + y1 * y0)
@@ -180,12 +162,6 @@ for x0 in test_range:
           edge_inf_x_denom = float(x0 * x0 + 2. * x0 * y0 + x1 * x1 + 2. * x1 * y1)
           edge_inf_y_denom = float(y0 * y0 + 2. * x0 * y0 + y1 * y1 + 2. * x1 * y1)
 
-
-
-
-
-
-
           # for testing moran's I
           n = 2.
           x_avg = float(x0 + x1) / n
@@ -196,8 +172,6 @@ for x0 in test_range:
           pop_denom = float(2 * total_x * (total_pop - total_x))
           dissim_sum = float(abs(x0 * total_pop - p0 * total_x) + abs(x1 * total_pop - p1 * total_x))
           gini_sum = float(abs(x0 * p1 - p0 * x1) +  abs(x1 * p0 - p1 * x0))
-
-
 
           assert (single_brackets(x, y, A) == e)
           assert (weighted_single_brackets(x, y, 0.5, A) == e_weighted_half)
@@ -377,7 +351,6 @@ for x0 in test_range:
                             pop_denom = float(2 * total_x * (total_pop - total_x))
                             dissim_sum = float(abs(x0 * total_pop - p0 * total_x) + abs(x1 * total_pop - p1 * total_x) + abs(x2 * total_pop - p2 * total_x) + abs(x3 * total_pop - p3 * total_x))
                             gini_sum = 2. * float(abs(x0 * p1 - p0 * x1) +  abs(x0 * p2 - p0 * x2) + abs(x0 * p3 - p0 * x3) + abs(x1 * p2 - p1 * x2) + abs(x1 * p3 - p1 * x3) + abs(x2 * p3 - p2 * x3) )
-
 
                             assert (single_brackets(x, y, A) == e)
                             assert (skew(x, y, A) == skew_x)

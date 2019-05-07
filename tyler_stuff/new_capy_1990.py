@@ -23,20 +23,14 @@ new_city_names_for_1990 = ['Baton-Rouge_LA', 'Buffalo-Cheektowaga-Niagara-Falls_
 new_city_names_manual_for_1990 = ['Atlanta-Sandy-Springs-Gainesville_GA-AL', 'Birmingham-Hoover_AL','Fresno_CA' , 'Houston-The-Woodlands-Sugar-Land_TX', 'Kingsport-Bristol-Bristol_TN-VA', 'Lansing-East-Lansing_MI', 'Mobile_AL', 'Nashville-Davidson--Murfreesboro--Franklin_TN', 'Sarasota-Bradenton-Punta-Gorda_FL', 'Seattle-Tacoma-Olympia_WA', 'South-Bend-Mishawaka_IN-MI']
 
 
-
-
 # a subset of the above list, this will be used to make histograms across
 
 names_of_files_for_pop_histogram = ['San-Jose-Sunnyvale-Santa-Clara_CA', 'Austin-Round-Rock_TX']
 
 pop_dict = {}
 
-
-
 city_names_1990 = good_city_file_names_1990 + bad_city_file_names_1990 + new_city_names_for_1990 + new_city_names_manual_for_1990
 city_names_1990 = sorted(city_names_1990)
-
-
 
 b_scores = [[]]
 h_scores = [[]]
@@ -102,9 +96,6 @@ for city in city_names_1990:
         print "NUMBER OF TRACTS IS LOW: " + str(n_tracts)
         continue
 
-
-
-
     # assign demographic population per geographic unit
     for i in range(n_tracts):
         # I assume that each category is discrete (there are no people in multiple categories)
@@ -130,10 +121,6 @@ for city in city_names_1990:
     total_black = old_black.sum()
     total_pop = old_tot.sum()
 
-    #pop_dict[city] = tot
-    #print "ending here"
-    # maybe I can use these vectors, sum them up, etc.
-
     white_rho = float(total_white) / float(total_pop) * 100.
     black_rho = float(total_black) / float(total_pop) * 100.
 
@@ -141,8 +128,6 @@ for city in city_names_1990:
 
     # make adjacency matrix
     A = nx.to_numpy_matrix(g)
-
-
     # rehandle the matrices...
     A_new, dummy_list = remove_dummy_tracts(A, old_tot)
     A = A_new
@@ -162,11 +147,6 @@ for city in city_names_1990:
     na = np.zeros((new_n_tracts,1))
     # the score that we will be using
     poc = np.zeros((new_n_tracts,1))
-
-
-
-
-
     new_placement = 0
 
     for i in range(n_tracts):
@@ -192,12 +172,6 @@ for city in city_names_1990:
 
     n_tracts = new_n_tracts
     # done rehandling adjacency, dummy tracts, etc.
-
-
-
-
-
-
     #compute and store the energy scores in a csv
     btemplist = []
     # info, like name, population, black rho, and white rho (percentage of that pop in the city)
@@ -226,35 +200,7 @@ for city in city_names_1990:
     btemplist.append(deg_dict["max"])
     btemplist.append(deg_dict["min"])
 
-
-
-
-
-
     b_scores.append(btemplist)
-
-
-
-#print "saving population histogram stuff to .csv, delete me if you don't want to do that"
-
-"""
-with open('tract_pop_histograms_2_cities_1990.csv', 'w') as csvfile:
-    writer = csv.writer(csvfile, delimiter=",")
-    for city in names_of_files_for_pop_histogram:
-        tract_list = []
-        old_numpy_list = pop_dict[city]
-        for i in range(len(old_numpy_list)):
-            tract_list.append(old_numpy_list[i][0])
-
-
-
-
-
-
-        writer.writerow([city] + tract_list)
-
-print "done with csv stuff"
-"""
 
 # get the ith column of a 2D list
 def column(matrix, i, k=0):
@@ -290,8 +236,6 @@ for i in range(len(b_scores) - 2):
     now_row = b_scores[i + 2]
     rank = column(rank_matrix, i, k=0)
     b_scores[i + 2] = now_row[0:6] + [rank[0], now_row[6], rank[1], now_row[7], rank[2], now_row[8], rank[3], now_row[9], rank[4], now_row[10], rank[5], now_row[11], rank[6]] + [now_row[12], now_row[13], now_row[14], now_row[15], now_row[16]]
-
-
 
 with open('1990_for_4_23_19_no_dummies.csv', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")

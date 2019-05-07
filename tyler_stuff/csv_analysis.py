@@ -45,9 +45,6 @@ name_dict[black_rho_index] = "Percentage Black"
 
 
 
-
-
-
 for index in info_indices:
   # will append to these lists
   info_dict[index] = []
